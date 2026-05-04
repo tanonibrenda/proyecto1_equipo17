@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TP01v2
+namespace TP01
 {
     internal class Program
     {
@@ -27,6 +29,38 @@ namespace TP01v2
             public string categoria;
             public List<Jugador> jugadores;
             public int cantMinima;
+
+            /// <summary>
+            /// Devuelve true si el equipo tiene al jugador, y false si no lo tiene 
+            /// </summary>
+            /// <param name="jugador"></param> recibe un jugador
+            /// <returns></returns>
+            public bool TieneJugador(Jugador jugador)
+            {
+                
+                foreach(Jugador jug in jugadores)
+                {
+                    if (jug.dni == jugador.dni)
+                    {
+                        return true;
+                    }
+                    
+                }
+                return false;
+            }
+            public int CantidadJugadoresEquipo(List<Jugador> jugadores)
+            {
+                int cant = 0;
+                foreach (Jugador jug in jugadores)
+                {
+                    if (jug.EstaEnEquipo(this))
+                    {
+                        cant++;
+                    }
+                }
+                return cant;
+            }
+
         }
 
         struct Jugador
@@ -35,22 +69,46 @@ namespace TP01v2
             public string nombre;
             public string apellido;
             public int edad;
-            public List<Equipo> equipos;
             public bool seguro;
             public bool afiliado;
+            public List<Equipo> equipAsig;
 
-            public void PrintJugador()
+            public bool EstaEnEquipo(Equipo equipo)
+            {
+                if(equipAsig!= null)
+                {
+                    foreach(Equipo equip in equipAsig)
+                    {
+                        if(equip.nombreEquipo == equipo.nombreEquipo)
+                            { return true; }
+                    }
+                }
+                return false;
+            }
+
+
+
+            public void PrintSmall()
             {
                 Console.WriteLine($"DNI : {dni}");
                 Console.WriteLine($"Nombre : {nombre}");
                 Console.WriteLine($"Apellido : {apellido}");
                 Console.WriteLine($"Edad : {edad}");
-                if (seguro) Console.WriteLine("Esta asegurado"); else Console.WriteLine("No esta asegurado");
-                if (afiliado) Console.WriteLine("Esta afiliado"); else Console.WriteLine("No esta afiliado");
-                if(equipos.Count > 0)
+            }
+            public void PrintFull()
+            {
+                Console.WriteLine($"DNI : {dni}");
+                Console.WriteLine($"Nombre : {nombre}");
+                Console.WriteLine($"Apellido : {apellido}");
+                Console.WriteLine($"Edad : {edad}");
+                Console.WriteLine(seguro ? "Esta asegurado" : "No esta asegurado");
+                Console.WriteLine(afiliado ? "Esta afiliado" : "No esta afiliado");
+
+
+                if(equipAsig != null && equipAsig.Count > 0)
                 {
                     Console.WriteLine("juega en los siguientes equipos:");
-                    ImprimirListado( equipos );
+                    ImprimirListado(equipAsig);
                 }
                 else
                 {
@@ -164,14 +222,141 @@ namespace TP01v2
 
 
         //ABM DE JUGADORES 
-
-        static void AltaJugador()
+        /// <summary>
+        /// Alta Jugador crea una nueva copia de struct Jugador
+        /// </summary>
+        /// <param name="jugadores"></param>
+        /// <returns></returns>
+        static void AltaJugador(List<Jugador> jugadores)
         {
+            string dni;
+            string nombre;
+            string apellido;
+            int edad;
+            bool seguro = false;
+            bool afiliado = false;
+             List<Equipo> equipAsig = new List<Equipo>();
+            Console.WriteLine("Alta de jugador:");
+            Console.WriteLine();
+            while(true)
+            {
+                Console.WriteLine("Ingrese el DNI: ");
+                dni = Console.ReadLine();
+                //verifico que sea valido
+                if (VerificaDNIValido(dni))
+                {
+                    //verifico que no exista
+                    if (!DNIExistente(dni, jugadores))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"El jugador con DNI {dni} ya esta cargado");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("El formato ingresado no es valido, por favor ingrese solo numeros sin puntos ni espacios");
+                }
+                Espera();
+                LimpiarPantalla();
+            }
+            Console.WriteLine("Ingrese el nombre: ");
+            nombre = Console.ReadLine();
+            Console.WriteLine("Ingrese el apellido: ");
+            apellido = Console.ReadLine();
+            Console.WriteLine("Ingrese la edad (1 a 99 años): ");
+            string edadString = Console.ReadLine();
+
+            //loop para forzar edad valida
+            while(true)
+            {
+                if (VerificaIntRango(edadString, 1, 99))
+                {
+                    edad = int.Parse(edadString);
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Ingreso invalido");
+                }
+
+            }
+            //loop para forzar seguro valido
+            while(true)
+            {
+                Console.WriteLine("Está asegurado? (S/N)");
+                string segString = Console.ReadLine();
+                if(ValidaBool(segString))
+                {
+                    switch (segString)
+                    {
+                        case "s":
+                        case "S":
+                            seguro = true;
+                            break;
+                        case "n":
+                        case "N":
+                            seguro = false;
+                            break;
+                    }
+                    break;
+                }
+                Console.WriteLine("Ingreso no valido!!!");
+            }
+
+            //loop para forzar afiliacion valida
+            while(true)
+            {
+                Console.WriteLine("Está afiliado? (S/N)");
+                string afilString = Console.ReadLine();
+                if (ValidaBool(afilString))
+                {
+                    switch (afilString)
+                    {
+                        case "s":
+                        case "S":
+                            afiliado = true;
+                            break;
+                        case "n":
+                        case "N":
+                            afiliado = false;
+                            break;
+                    }
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Ingreso no valido!!!");
+                }
+            }
+
+            // creo al jugador
+            Jugador newJugador = new Jugador();
+            newJugador.dni = dni;
+            newJugador.nombre = nombre;
+            newJugador.apellido = apellido;
+            newJugador.edad = edad;
+            newJugador.seguro = seguro;
+            newJugador.afiliado = afiliado;
+            newJugador.equipAsig = equipAsig;
+
+            jugadores.Add(newJugador);
+
+            Console.WriteLine("nuevo jugador agregado!!!");
+            Espera();
+            LimpiarPantalla();
 
         }
 
-        static void BajaJugador()
+        static void BajaJugador(List<Jugador> jugadores)
         {
+            Console.WriteLine("Este es el listado de jugadores existentes");
+            Console.WriteLine();
+
+            ImprimirListado(jugadores);
+
 
         }
 
@@ -180,20 +365,95 @@ namespace TP01v2
 
         }
 
-        // LISTADOS
-        static void JugadoresAsegurados()
-        {
+        // LISTADOS **************************************************************
 
+        /// <summary>
+        /// Imprime el listado de jugadores asegurados
+        /// </summary>
+        /// <param name="jugadores"></param>  recibe un List de elementos Jugador, con todos los jugadores inscriptos
+        static void JugadoresAsegurados(List<Jugador> jugadores)
+        {
+            Console.WriteLine("Jugadores asegurados: ");
+            Console.WriteLine();
+
+            int cant = 0;
+            foreach(Jugador jug in  jugadores)
+            {
+                if(jug.seguro)
+                {
+                   jug.PrintSmall();
+                   cant ++;
+                }
+            }
+            if(cant == 0)
+            {
+                Console.WriteLine("No hay jugadores asegurados");
+            }
+            Espera();
+            LimpiarPantalla();
         }
 
-        static void JugadoresXEdad()
+        /// <summary>
+        /// Imprime el listado de todos los jugadores ordenados por edad
+        /// </summary>
+        /// <param name="jugadores"></param> recibe un List de elementos Jugador, con todos los jugadores inscriptos
+        static void JugadoresXEdad(List<Jugador> jugadores)
         {
+            // creo una copia de la lista 
+            List<Jugador> copia = new List<Jugador>(jugadores);
 
+            Console.WriteLine("Listado de jugadores ordenados por edad:");
+
+            //ordeno la nueva lista por edad ascendente
+            copia.Sort((a, b) => a.edad.CompareTo(b.edad));
+
+            //recorro el listado ordenado y lo imprimo
+            foreach (var j in copia)
+            {
+                j.PrintSmall();
+            }
+
+            //si no hay jugadores lo informo
+            if(copia.Count == 0)
+            {
+                Console.WriteLine("no hay jugadores en la liga");
+            }
+            Espera();
+            LimpiarPantalla();
         }
 
-        static void JugadoresXCategoria()
+        /// <summary>
+        /// Imprime todos los jugadores x categoria 
+        /// </summary>
+        /// <param name="jugadores"></param> recibe un List de elementos Jugador, con todos los jugadores inscriptos
+        static void JugadoresXCategoria(List<Jugador> jugadores)
         {
 
+            Console.WriteLine("Jugadores agrupados por Categoria:");
+            Console.WriteLine();
+            for (int i = 0; i < categoria.Length; i++)
+            {
+                List<Jugador> jugadoresCategoria = new List<Jugador>();
+
+                foreach (Jugador j in jugadores)
+                {
+                    if (ObtenerIndiceCategoria(j.edad) == i)
+                    {
+                        jugadoresCategoria.Add(j);
+                    }
+                }
+
+                Console.WriteLine(categoria[i]);
+                foreach(Jugador j in jugadoresCategoria)
+                {
+                    j.PrintSmall();
+                }
+
+                // agrego espacio
+                Console.WriteLine();
+            }
+            Espera();
+            LimpiarPantalla();
         }
 
         // REPORTES ******************************************************************
@@ -208,8 +468,11 @@ namespace TP01v2
             Jugador masJoven;
             Jugador masViejo;
 
+            Console.WriteLine("Jugador mas Joven y mas Viejo:");
+            Console.WriteLine();
+
             // verifico si la liga no tiene jugadores
-            if(jugadores.Count == 0)
+            if (jugadores.Count == 0)
             {
                 Console.WriteLine("Actualmente no hay ningun jugador en la liga");
                 Espera();
@@ -232,9 +495,9 @@ namespace TP01v2
                     }
                 }
                 Console.WriteLine("el jugador mas joven es:");
-                masJoven.PrintJugador();
+                masJoven.PrintFull();
                 Console.WriteLine("el jugador mas viejo es:");
-                masViejo.PrintJugador();
+                masViejo.PrintFull();
                 Espera();
                 LimpiarPantalla();
             }
@@ -258,8 +521,12 @@ namespace TP01v2
                 cantXCat[idx]++;
             }
 
+            Console.WriteLine("Cantidad de Jugadores x Categoria:");
+            Console.WriteLine();
+
+
             //imprimo el resultado
-            for(int i = 0; i < categoria.Length; i++)
+            for (int i = 0; i < categoria.Length; i++)
             {
                 Console.WriteLine($"En la liga hay {cantXCat[i]} jugadores que son categoria {categoria[i]}");
             }
@@ -350,12 +617,24 @@ namespace TP01v2
         /// Imprime un listado de los elem de una List de Equipo
         /// </summary>
         /// <param name="equipos"></param> Listado de Equipo
+        static void ImprimirListado(List<Jugador> jugadores)
+        {
+            int i = 1;
+            foreach (var jug in jugadores)
+            {
+                Console.WriteLine($"{i} -");
+                jug.PrintSmall();
+                i++;
+            }
+        }
+
         static void ImprimirListado(List<Equipo> equipos)
         {
             int i = 1;
-            foreach (var elem in equipos)
+            foreach (var equip in equipos)
             {
-                Console.WriteLine($"{i} - {elem}");
+                Console.WriteLine($"{i} - {equip.nombreEquipo}");
+                
                 i++;
             }
         }
@@ -431,6 +710,24 @@ namespace TP01v2
             // si esta todo correcto
             return true;
 
+        }
+        static bool ValidarOpcionElegida<T>(List<T> lista, string opc)
+        {
+            if (string.IsNullOrEmpty(opc))
+                return false;
+
+            foreach (char c in opc)
+            {
+                if (!char.IsDigit(c))
+                    return false;
+            }
+
+            int opcNum = int.Parse(opc);
+
+            if (opcNum < 1 || opcNum > lista.Count)
+                return false;
+
+            return true;
         }
 
         //funcion que inicializa los menues
@@ -508,11 +805,11 @@ namespace TP01v2
                     break;
 
                 case AccionMenu.AltaJugador:
-                    AltaJugador();
+                    AltaJugador(jugadores);
                     break;
 
                 case AccionMenu.BajaJugador:
-                    BajaJugador();
+                    BajaJugador(jugadores);
                     break;
 
                 case AccionMenu.ModificarJugador:
@@ -520,15 +817,15 @@ namespace TP01v2
                     break;
 
                 case AccionMenu.JugadoresAsegurados:
-                    JugadoresAsegurados();
+                    JugadoresAsegurados(jugadores);
                     break;
 
                 case AccionMenu.JugadoresXEdad:
-                    JugadoresXEdad();
+                    JugadoresXEdad(jugadores);
                     break;
 
                 case AccionMenu.JugadoresXCategoria:
-                    JugadoresXCategoria();
+                    JugadoresXCategoria(jugadores);
                     break;
 
                 case AccionMenu.MasJovenMasViejo:
@@ -595,6 +892,87 @@ namespace TP01v2
             else return 4;                    // Veteranos
         }
 
+        /// <summary>
+        /// Verficia si el string es todo numerico, no nulo 
+        /// </summary>
+        /// <param name="dni"></param>
+        /// <returns></returns>
+        static bool VerificaDNIValido(string dni)
+        {
+            //verica si es nulo
+            if (string.IsNullOrEmpty(dni))
+                return false;
+
+            //recorre cada caracter del string
+            foreach (char c in dni)
+            {
+                //si no es un digito retorna falso
+                if (!char.IsDigit(c))
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Verifica si ya fue cargado antes un DNI en el listado de jugadores de la liga
+        /// </summary>
+        /// <param name="dni"></param>     string con el numero de dni a buscar
+        /// <param name="jugadores"></param>  List de elem Jugador, con todos los jugadores de la liga
+        /// <returns></returns>
+        static bool DNIExistente (string dni, List<Jugador> jugadores)
+        {
+            foreach(Jugador jug in jugadores)
+            {
+                if(jug.dni == dni)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        static bool VerificaIntRango(string valor, int valorMin, int valorMax)
+        {
+            //verica si es nulo
+            if (string.IsNullOrEmpty(valor))
+                return false;
+
+            //recorre cada caracter del string
+            foreach (char c in valor)
+            {
+                //si no es un digito retorna falso
+                if (!char.IsDigit(c))
+                    return false;
+            }
+
+            int valorNum = int.Parse(valor);
+            if(valorNum < valorMin || valorNum > valorMax)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// recib en string y ve si es s, S, n o N para ser un bool
+        /// </summary>
+        /// <param name="valor"></param> recibe un string 
+        /// <returns></returns>
+        static bool ValidaBool(string valor)
+        {
+            switch(valor)
+            {
+                case "s":
+                case "S":
+                case "n":
+                case "N":
+                    return true;
+                default:
+                    return false;
+            }
+        }
 
 
         //**************************************************************************************************
