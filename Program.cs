@@ -1,0 +1,653 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TP01v2
+{
+    internal class Program
+    {
+        //**************************************************************************************************
+        //*** ESTRUCUTRAS PRINCIPALES///
+        //************************************************************************************************** 
+        static readonly string[] categoria =
+        {
+            "Infantiles",     //  < 13
+            "Cadetes",        //  >=13 && < 16
+            "Juveniles",      //  >=16 && < 18
+            "Primera",        //  >=18 
+            "Veteranos"       //  >=35 
+        };
+
+        struct Equipo
+        {
+            public string nombreEquipo;
+            public string nombreClub;
+            public string categoria;
+            public List<Jugador> jugadores;
+            public int cantMinima;
+        }
+
+        struct Jugador
+        {
+            public string dni;
+            public string nombre;
+            public string apellido;
+            public int edad;
+            public List<Equipo> equipos;
+            public bool seguro;
+            public bool afiliado;
+
+            public void PrintJugador()
+            {
+                Console.WriteLine($"DNI : {dni}");
+                Console.WriteLine($"Nombre : {nombre}");
+                Console.WriteLine($"Apellido : {apellido}");
+                Console.WriteLine($"Edad : {edad}");
+                if (seguro) Console.WriteLine("Esta asegurado"); else Console.WriteLine("No esta asegurado");
+                if (afiliado) Console.WriteLine("Esta afiliado"); else Console.WriteLine("No esta afiliado");
+                if(equipos.Count > 0)
+                {
+                    Console.WriteLine("juega en los siguientes equipos:");
+                    ImprimirListado( equipos );
+                }
+                else
+                {
+                    Console.WriteLine("Actualmente no participa en ningun equipo");
+                }
+            }
+        }
+
+        //**************************************************************************************************
+        //*** ESTRUCUTRAS AUXILIARES///
+        //************************************************************************************************** 
+
+
+        // define el tipo de opcion que puedo tener dentro de un menu
+        enum TipoOpcion
+        {
+            Accion, 
+            Menu
+        }
+
+        enum AccionMenu
+        {
+            AltaEquipo,                 //alta de equipo 
+            BajaEquipo,                 //baja de equipo
+            ModificarEquipo,            //Modif de equipo
+            AltaJugador,                //alta jugador
+            BajaJugador,                //baja jugador
+            ModificarJugador,           //modif jugador
+            JugadoresAsegurados,        //listado jugadores asegurados
+            JugadoresXEdad,             //Listado de jugadores ordenados x edad
+            JugadoresXCategoria,        //Listado de jugadores agrupados x categoria
+            MasJovenMasViejo,           //Reporte de jugador mas joven y mas viejo
+            CantidadXCategoria,         //Cantidad de jugadores x categoria
+            PromedioEdad,               //promedio de edad de la liga
+            Exit                        //salir del programa
+        }
+
+        //define en que consiste una opcion de menu
+        struct OpcionMenu
+        {
+            public string nombreOpcion;
+            public TipoOpcion tipoOpcion;
+            public OpcionMenu[] newMenu;
+            public AccionMenu accion;
+        }
+
+        // declaro los menues
+        static OpcionMenu[] administrarEquipos;
+        static OpcionMenu[] administrarJugadores;
+        static OpcionMenu[] listados;
+        static OpcionMenu[] reportes;
+        static OpcionMenu[] menuPrincipal;
+
+        //**************************************************************************************************
+        //*** FUNCIONES PRINCIPALES///
+        //************************************************************************************************** 
+
+
+        // ABM DE EQUIPOS
+        static void AltaEquipo(List<Equipo> equipos, List<Jugador> jugadores)
+        {
+            //inicializo variables, para guardar los parametros antes de crear el equioo
+            string nombreClub;
+            string nombreEquipo;
+            string respCategoria;
+            int categoriaIndex;
+            List<Jugador> jugadoresDelClub = new List<Jugador>();
+            int cantMinima = 9;
+
+            //solicito el nombre del club 
+            Console.WriteLine("Ingrese el nombre del Club");
+            nombreClub = Console.ReadLine();
+
+            //cuento cuantos equipos ya tiene ese club
+            int cantEquiposDelClub = ContarEquiposPorClub(equipos, nombreClub);
+
+            // creo el nombre del equipo, con el formato "Club" + {nombre del club} + Letras
+            nombreEquipo = "Club " + nombreClub + " " + ObtenerEtiqueta(cantEquiposDelClub + 1);
+
+            //genero un loop para obtener la categoria adecuada
+            while(true)
+            {
+                Console.WriteLine("Ingrese la categoria");
+                ImprimirListado(categoria);
+
+                respCategoria = Console.ReadLine();
+
+                if (ValidarOpcionElegida(categoria, respCategoria))
+                {
+                    categoriaIndex = int.Parse(respCategoria) - 1;   // le resto 1 para acomodarlo al indice del array
+                    break;
+                }
+            }
+
+            /// FALTA IMPLEMENTAR EL ALTA.. VER SI NO CONVIENE EMPEZAR X LOS LISTADOS Y X JUGADORES
+
+
+
+
+        }
+
+        static void BajaEquipo()
+        {
+
+        }
+
+        static void ModificarEquipo()
+        {
+
+        }
+
+
+        //ABM DE JUGADORES 
+
+        static void AltaJugador()
+        {
+
+        }
+
+        static void BajaJugador()
+        {
+
+        }
+
+        static void ModificarJugador()
+        {
+
+        }
+
+        // LISTADOS
+        static void JugadoresAsegurados()
+        {
+
+        }
+
+        static void JugadoresXEdad()
+        {
+
+        }
+
+        static void JugadoresXCategoria()
+        {
+
+        }
+
+        // REPORTES ******************************************************************
+
+        /// <summary>
+        /// Imprime el jugador mas joven y mas viejo del listado de jugadors
+        /// </summary>
+        /// <param name="jugadores"></param> recibe un List de elemntos Jugador, con todos los jugadores inscriptos
+        static void MasJovenMasViejo(List<Jugador> jugadores)
+        {
+            //declaro variables locales para el mas joven y el mas viejo
+            Jugador masJoven;
+            Jugador masViejo;
+
+            // verifico si la liga no tiene jugadores
+            if(jugadores.Count == 0)
+            {
+                Console.WriteLine("Actualmente no hay ningun jugador en la liga");
+                Espera();
+                LimpiarPantalla();
+            }
+            else // si tiene jugadores
+            {
+
+                masJoven = jugadores[0];
+                masViejo = jugadores[0];
+                for(int i = 1; i < jugadores.Count; i++)
+                {
+                    if (jugadores[i].edad < masJoven.edad)
+                    {
+                        masJoven = jugadores[i];
+                    }
+                    else if (jugadores[i].edad > masViejo.edad)
+                    {
+                        masViejo = jugadores[i];
+                    }
+                }
+                Console.WriteLine("el jugador mas joven es:");
+                masJoven.PrintJugador();
+                Console.WriteLine("el jugador mas viejo es:");
+                masViejo.PrintJugador();
+                Espera();
+                LimpiarPantalla();
+            }
+
+
+        }
+
+        /// <summary>
+        /// Imprime la cantidad de jugadores que hay por categoria, segun la edad de los mismos, cada jugador puede estar en mas de un equipo de su edad para arriba
+        /// </summary>
+        /// <param name="jugadores"></param> recibe un List de elemntos Jugador, con todos los jugadores inscriptos
+        static void CantidadXCategoria(List<Jugador> jugadores)
+        {
+            // creo un array de int local con la misma cantidad de elementos q de categorias
+            int[] cantXCat = new int [categoria.Length];
+
+            // recorro el list de jugadore y vos sumandola categoria
+            foreach (Jugador j in jugadores)
+            {
+                int idx = ObtenerIndiceCategoria(j.edad);
+                cantXCat[idx]++;
+            }
+
+            //imprimo el resultado
+            for(int i = 0; i < categoria.Length; i++)
+            {
+                Console.WriteLine($"En la liga hay {cantXCat[i]} jugadores que son categoria {categoria[i]}");
+            }
+            Espera();
+            LimpiarPantalla();
+        }
+
+        /// <summary>
+        /// Imprime el promedio de edad de todos los jugadores inscriptos
+        /// </summary>
+        /// <param name="jugadores"></param>  recibe un List de elemntos Jugador, con todos los jugadores inscriptos
+        static void PromedioEdad(List<Jugador> jugadores)
+        {
+            //inicializo variable local con la suma de las edades
+            float sumaEdades = 0;
+
+            // verifico que haya jugadores en la liga
+            if(jugadores.Count > 0)
+            {
+                foreach (Jugador jugador in jugadores)
+                {
+                    sumaEdades += jugador.edad;
+                }
+                Console.WriteLine($"El promedio de edad de los jugadores de la liga es {sumaEdades / jugadores.Count}");
+
+            }
+            else // si no hay jugadores
+            {
+                Console.WriteLine("Actualmente la liga no tiene jugadores");
+                
+            }
+            Espera();
+            LimpiarPantalla();
+        }
+
+
+
+        //**************************************************************************************************
+        //*** FUNCIONES AUXILIARES///
+        //************************************************************************************************** 
+
+        /// <summary>
+        /// Limpia la pantalla de la consola
+        /// </summary>
+        static void LimpiarPantalla()
+        {
+            Console.Clear();
+        }
+
+        /// <summary>
+        /// Espera un ingreso de teclado para continuar la ejecucion
+        /// </summary>
+        static void Espera()
+        {
+            Console.WriteLine("Presione cualquier tecla para continuar");
+            Console.ReadLine();
+        }
+
+        /// <summary>
+        /// Imprime un listado extraeido de un array de elementos OpcionMenu
+        /// </summary>
+        /// <param name="menu"></param> recibe un array de elementos OpcionMenu
+        static void ImprimirListado(OpcionMenu[] menu)
+        {
+            int i = 1;
+            foreach(OpcionMenu opc in menu)
+            {
+                Console.WriteLine($"{i} - {opc.nombreOpcion}");
+                i++;
+            }
+        }
+
+        /// <summary>
+        /// Imprime un listado extraido de los elem de un array de strings
+        /// </summary>
+        /// <param name="listado"></param> Array de strings
+        static void ImprimirListado(string[] listado)
+        {
+            int i = 1;
+            foreach (var elem in listado)
+            {
+                Console.WriteLine($"{i} - {elem}");
+                i++;
+            }
+        }
+
+        /// <summary>
+        /// Imprime un listado de los elem de una List de Equipo
+        /// </summary>
+        /// <param name="equipos"></param> Listado de Equipo
+        static void ImprimirListado(List<Equipo> equipos)
+        {
+            int i = 1;
+            foreach (var elem in equipos)
+            {
+                Console.WriteLine($"{i} - {elem}");
+                i++;
+            }
+        }
+
+
+        /// <summary>
+        /// Valida la opcion elegida
+        /// </summary>
+        /// <param name="menu"></param> El array de elementos OpcionMenu
+        /// <param name="opc"></param>  El ingreso por teclado hecho por el usuario
+        /// <returns></returns>
+        static bool ValidarOpcionElegida(OpcionMenu[] menu, string opc)
+        {
+            // valida que no sea una cadena vacia
+            if(opc.Length == 0)
+            {
+                return false;
+            }
+            // valida que cada char de la cadena sea un digito
+            for (int i = 0; i < opc.Length; i++)
+            {
+                if (!char.IsDigit(opc[i]))
+                {
+                    return false;
+                }
+            }
+            
+            //sabiendo que es digito lo convierte a entero
+            int opcNum = int.Parse(opc);
+
+            //valida que la opcion este dentro de las opciones del menu
+            if(opcNum <1 || opcNum > menu.Length)
+                { 
+                    return false; 
+                }
+    
+            // si esta todo correcto
+            return true;
+
+        }
+
+        /// <summary>
+        /// Valida que la opcion elegida
+        /// </summary>
+        /// <param name="lista"></param> array de strings
+        /// <param name="opc"></param> El ingreso por teclado hecho por el usuario
+        /// <returns></returns>
+        static bool ValidarOpcionElegida(string[] lista, string opc)
+        {
+            // valida que no sea una cadena vacia
+            if (opc.Length == 0)
+            {
+                return false;
+            }
+            // valida que cada char de la cadena sea un digito
+            for (int i = 0; i < opc.Length; i++)
+            {
+                if (!char.IsDigit(opc[i]))
+                {
+                    return false;
+                }
+            }
+
+            //sabiendo que es digito lo convierte a entero
+            int opcNum = int.Parse(opc);
+
+            //valida que la opcion este dentro de las opciones del menu
+            if (opcNum < 1 || opcNum > lista.Length)
+            {
+                return false;
+            }
+
+            // si esta todo correcto
+            return true;
+
+        }
+
+        //funcion que inicializa los menues
+        static void InicializarMenues()
+        {
+            administrarEquipos = new OpcionMenu[]
+            {
+                new OpcionMenu{ nombreOpcion = "Alta de Equipo", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.AltaEquipo },
+                new OpcionMenu{ nombreOpcion = "Baja de Equipo", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.BajaEquipo },
+                new OpcionMenu{ nombreOpcion = "Modificacion de Equipo", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.ModificarEquipo },
+                new OpcionMenu{ nombreOpcion = "Volver atras", tipoOpcion = TipoOpcion.Menu }
+            };
+
+            administrarJugadores = new OpcionMenu[]
+            {
+                new OpcionMenu{ nombreOpcion = "Alta de Jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.AltaJugador },
+                new OpcionMenu{ nombreOpcion = "Baja de Jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.BajaJugador },
+                new OpcionMenu{ nombreOpcion = "Modificacion de Jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.ModificarJugador },
+                new OpcionMenu{ nombreOpcion = "Volver atras", tipoOpcion = TipoOpcion.Menu }
+            };
+
+            listados = new OpcionMenu[]
+            {
+                new OpcionMenu{ nombreOpcion = "Listar Jugadores asegurados", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.JugadoresAsegurados },
+                new OpcionMenu{ nombreOpcion = "Listar Jugadores ordenados por edad", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.JugadoresXEdad },
+                new OpcionMenu{ nombreOpcion = "Listar Jugadores agrupados por categoria", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.JugadoresXCategoria},
+                new OpcionMenu{ nombreOpcion = "Volver atras", tipoOpcion = TipoOpcion.Menu }
+            };
+
+            reportes = new OpcionMenu[]
+            {
+                new OpcionMenu{ nombreOpcion = "Obtener jugador mas joven y mas viejo", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.MasJovenMasViejo },
+                new OpcionMenu{ nombreOpcion = "Obtener cantidad de Jugadores por categoria", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.CantidadXCategoria },
+                new OpcionMenu{ nombreOpcion = "Obtener promedio de edad General", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.PromedioEdad},
+                new OpcionMenu{ nombreOpcion = "Volver atras", tipoOpcion = TipoOpcion.Menu }
+            };
+
+            menuPrincipal = new OpcionMenu[]
+            {
+                new OpcionMenu{ nombreOpcion = "Administrar Equipos", tipoOpcion = TipoOpcion.Menu },
+                new OpcionMenu{ nombreOpcion = "Administrar Jugadores", tipoOpcion = TipoOpcion.Menu },
+                new OpcionMenu{ nombreOpcion = "Listados", tipoOpcion = TipoOpcion.Menu },
+                new OpcionMenu{ nombreOpcion = "Reportes", tipoOpcion = TipoOpcion.Menu },
+                new OpcionMenu{ nombreOpcion = "Salir", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.Exit }
+            };
+
+
+            // lineko de relacion entre los menues para habilitar la navegacion 
+            menuPrincipal[0].newMenu = administrarEquipos;
+            menuPrincipal[1].newMenu = administrarJugadores;
+            menuPrincipal[2].newMenu = listados;
+            menuPrincipal[3].newMenu = reportes;
+
+            administrarEquipos[3].newMenu = menuPrincipal;
+            administrarJugadores[3].newMenu = menuPrincipal;
+            listados[3].newMenu = menuPrincipal;
+            reportes[3].newMenu = menuPrincipal;
+        }
+
+        //funcion que analiza cual es la accion y la ejecuta
+        static void EjecutarAccion(AccionMenu accion, List<Equipo> equipos, List<Jugador> jugadores)
+        {
+            switch (accion)
+            {
+                case AccionMenu.AltaEquipo:
+                    AltaEquipo(equipos, jugadores);
+                    break;
+
+                case AccionMenu.BajaEquipo:
+                    BajaEquipo();
+                    break;
+
+                case AccionMenu.ModificarEquipo:
+                    ModificarEquipo();
+                    break;
+
+                case AccionMenu.AltaJugador:
+                    AltaJugador();
+                    break;
+
+                case AccionMenu.BajaJugador:
+                    BajaJugador();
+                    break;
+
+                case AccionMenu.ModificarJugador:
+                    ModificarJugador();
+                    break;
+
+                case AccionMenu.JugadoresAsegurados:
+                    JugadoresAsegurados();
+                    break;
+
+                case AccionMenu.JugadoresXEdad:
+                    JugadoresXEdad();
+                    break;
+
+                case AccionMenu.JugadoresXCategoria:
+                    JugadoresXCategoria();
+                    break;
+
+                case AccionMenu.MasJovenMasViejo:
+                    MasJovenMasViejo(jugadores);
+                    break;
+
+                case AccionMenu.CantidadXCategoria:
+                    CantidadXCategoria(jugadores);
+                    break;
+
+                case AccionMenu.PromedioEdad:
+                    PromedioEdad(jugadores);
+                    break;
+
+                case AccionMenu.Exit:
+                    LimpiarPantalla();
+                    Environment.Exit(0);
+                    break;
+            }
+        }
+
+        static int ContarEquiposPorClub(List<Equipo> equipos, string nombreClub)
+        {
+            int cantidad = 0;
+            foreach (Equipo equip in equipos)
+            {
+                if (equip.nombreClub == nombreClub)
+                {
+                    cantidad++;
+                }
+            }
+            return cantidad;
+        }
+
+        /// <summary>
+        /// Obtiene letra para ir incrementando alfabeticamente los nombres de los equipos del mismo club
+        /// </summary>
+        /// <param name="numero"></param> recibe el numero de equipos del club + 1
+        /// <returns>  devuelve un string A... Z, ... AA, AB... AZ</returns
+        /// 
+        static string ObtenerEtiqueta(int numero)  // REVISAR ESTA FUNCION
+        {
+            //INICIALIZA EL NUMERO 
+            string resultado = "";
+
+            while (numero > 0)
+            {
+                int resto = numero % 26;
+                char letra = (char)('A' + resto);
+
+                resultado = letra + resultado;
+                numero /= 26;
+            }
+
+            return resultado;
+        }
+
+        static int ObtenerIndiceCategoria(int edad)
+        {
+            if (edad < 13) return 0;          // Infantiles
+            else if (edad < 16) return 1;     // Cadetes
+            else if (edad < 18) return 2;     // Juveniles
+            else if (edad < 35) return 3;     // Primera
+            else return 4;                    // Veteranos
+        }
+
+
+
+        //**************************************************************************************************
+        //*** PROGRAMA PRINCIPAL
+        //************************************************************************************************** 
+
+
+
+        static void Main(string[] args)
+        {
+            //incializo los menues
+            InicializarMenues();
+
+            // creo lista de equipos
+            List<Equipo> equipos = new List<Equipo>();
+
+            // creo una lista de jugadores
+            List<Jugador> jugadores = new List<Jugador>();
+
+            //pongo al menu activo apuntando al menu principal
+            OpcionMenu[] currentMenu = menuPrincipal;
+
+            //loop principal del programa
+            while(true)
+            {
+                //inicializo la opcion de seleccion en null
+                string opc = null;
+
+                //Imprimo el menu actual               
+                ImprimirListado(currentMenu);
+
+                //capturo la eleccion del usuario
+                opc = Console.ReadLine();
+
+                // si la opcion es valida
+                if (ValidarOpcionElegida(menuPrincipal, opc))
+                {
+                    int seleccion = int.Parse(opc) - 1; // le resto 1 para poner el indice del arreglo
+
+                    // es una accion ?
+                    if (currentMenu[seleccion].tipoOpcion == TipoOpcion.Accion)
+                    {
+                        // ejecuta la accion
+                        EjecutarAccion(currentMenu[seleccion].accion, equipos, jugadores);
+                    }
+                    else  //si no es una accion es un menu
+                    {
+                        // apunto el menu activo al nuevo menu elegido
+                        currentMenu = currentMenu[seleccion].newMenu;
+                        LimpiarPantalla();
+                    }
+                }
+            }
+        }
+    }
+}
