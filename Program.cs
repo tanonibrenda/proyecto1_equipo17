@@ -85,7 +85,15 @@ namespace TP01
                 }
                 return false;
             }
+            public void AgregarAEquipo(Equipo equipo)
+            {
+                equipAsig.Add(equipo);
+            }
 
+            public void QuitarDeEquipo(Equipo equipo)
+            {
+                equipAsig.Remove(equipo);
+            }
 
 
             public void PrintSmall()
@@ -260,7 +268,7 @@ namespace TP01
                     Console.WriteLine("El formato ingresado no es valido, por favor ingrese solo numeros sin puntos ni espacios");
                 }
                 Espera();
-                LimpiarPantalla();
+                
             }
             Console.WriteLine("Ingrese el nombre: ");
             nombre = Console.ReadLine();
@@ -352,17 +360,88 @@ namespace TP01
 
         static void BajaJugador(List<Jugador> jugadores)
         {
+            int opcNum = -1;
+            string opc;
+            Console.WriteLine("BAJA DE JUGADORES");
             Console.WriteLine("Este es el listado de jugadores existentes");
             Console.WriteLine();
 
             ImprimirListado(jugadores);
 
 
+            // CAMBIAR LA SELECCION A UNA FUNCION AUXILIAR YA QUE TB LA UTILIZA LA MODIFICACION
+            //loop para forzar baja correcta
+            while(true)
+            {
+                
+                Console.WriteLine("Elija el numero de jugador que desea dar de baja: (S p/salir)");
+
+                opc = Console.ReadLine();
+
+                //verifica si quiere salir de la baja
+                if (opc == "s" || opc == "S")
+                {
+                    LimpiarPantalla();
+                    break;
+                }
+                if (ValidarOpcionElegida(jugadores, opc))
+                {
+                    opcNum = int.Parse(opc) - 1; // lo ajusto al index 
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Opcion Invalida!!!");
+                }
+            }
+
+            //si no eligio salir del menu y eligio un jugador para borrar 
+            if(opc != "s" && opc != "S")
+            {
+                Console.WriteLine("Ha elegido a este jugador");
+                jugadores[opcNum].PrintFull();
+
+                //loop para forzar la eleccion valida
+                while (true)
+                {
+                    Console.WriteLine("Desea borrarlo? (S/N)");
+                    opc = Console.ReadLine();
+                    if (ValidaBool(opc))
+                    {
+                        switch (opc)
+                        {
+                            case "s":
+                            case "S":
+                                jugadores.RemoveAt(opcNum);
+                                Console.WriteLine("El jugador se ha dado de baja");
+                                break;
+                            case "n":
+                            case "N":
+                                Console.WriteLine("Se ha anulado la baja del jugador");
+
+                                break;
+                        }
+                        break;
+                    }
+                    Console.WriteLine("Ingreso no valido!!!");
+                }
+                Espera();
+                LimpiarPantalla();
+            }
+
         }
 
-        static void ModificarJugador()
+        static void ModificarJugador(List<Jugador> jugadores)
         {
+            Console.WriteLine("Este es el listado de jugadores existentes");
+            Console.WriteLine();
 
+            ImprimirListado(jugadores);
+
+            //forma de modificar a un jugador y que impacte en jugadores
+            //Jugador j = jugadores[i];
+            //j.edad = 30;
+            //jugadores[i] = j;
         }
 
         // LISTADOS **************************************************************
@@ -813,7 +892,7 @@ namespace TP01
                     break;
 
                 case AccionMenu.ModificarJugador:
-                    ModificarJugador();
+                    ModificarJugador(jugadores);
                     break;
 
                 case AccionMenu.JugadoresAsegurados:
@@ -932,6 +1011,13 @@ namespace TP01
             return false;
         }
 
+        /// <summary>
+        /// Verifica que un valor string sea un int dentro de un rango
+        /// </summary>
+        /// <param name="valor"></param>  valor string
+        /// <param name="valorMin"></param>  valor minimo
+        /// <param name="valorMax"></param>  valor maximo
+        /// <returns></returns>
         static bool VerificaIntRango(string valor, int valorMin, int valorMax)
         {
             //verica si es nulo
@@ -974,6 +1060,75 @@ namespace TP01
             }
         }
 
+        /// <summary>
+        /// verifica si se presiono Escape
+        /// </summary>
+        /// <param name="key"></param>  recibe el codigo de tecla presionada
+        /// <returns></returns>
+        static bool VerificaEscape(ConsoleKey key)
+        {
+            return key == ConsoleKey.Escape;
+        }
+
+
+        // *** BORRAR ES SOLO PARA TESTING*****
+        static void CargarJugadoresDemo(List<Jugador> jugadores)
+        {
+            Jugador j;
+
+            j = new Jugador();
+            j.dni = "1001";
+            j.nombre = "Juan";
+            j.apellido = "Perez";
+            j.edad = 20;
+            j.seguro = true;
+            j.afiliado = true;
+            j.equipAsig = new List<Equipo>();
+            jugadores.Add(j);
+
+            j = new Jugador();
+            j.dni = "1002";
+            j.nombre = "Ana";
+            j.apellido = "Gomez";
+            j.edad = 15;
+            j.seguro = false;
+            j.afiliado = true;
+            j.equipAsig = new List<Equipo>();
+            jugadores.Add(j);
+
+            j = new Jugador();
+            j.dni = "1003";
+            j.nombre = "Luis";
+            j.apellido = "Martinez";
+            j.edad = 12;
+            j.seguro = true;
+            j.afiliado = false;
+            j.equipAsig = new List<Equipo>();
+            jugadores.Add(j);
+
+            j = new Jugador();
+            j.dni = "1004";
+            j.nombre = "Carla";
+            j.apellido = "Lopez";
+            j.edad = 30;
+            j.seguro = true;
+            j.afiliado = true;
+            j.equipAsig = new List<Equipo>();
+            jugadores.Add(j);
+
+            j = new Jugador();
+            j.dni = "1005";
+            j.nombre = "Pedro";
+            j.apellido = "Diaz";
+            j.edad = 40;
+            j.seguro = false;
+            j.afiliado = false;
+            j.equipAsig = new List<Equipo>();
+            jugadores.Add(j);
+        }
+
+        // *** BORRAR ES SOLO PARA TESTING*****
+
 
         //**************************************************************************************************
         //*** PROGRAMA PRINCIPAL
@@ -991,6 +1146,8 @@ namespace TP01
 
             // creo una lista de jugadores
             List<Jugador> jugadores = new List<Jugador>();
+
+            CargarJugadoresDemo(jugadores);
 
             //pongo al menu activo apuntando al menu principal
             OpcionMenu[] currentMenu = menuPrincipal;
