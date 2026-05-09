@@ -61,6 +61,20 @@ namespace TP01
                 return cant;
             }
 
+            // se utiliza por combatilibad entre genericos de Jugador y Equipo
+            public void PrintSmall()
+            {
+                Console.WriteLine($"nombre del equipo : {nombreEquipo}");
+                Console.WriteLine($"Club : {nombreClub}");
+                Console.WriteLine($"Categoria : {categoria}");
+                Console.WriteLine($"Cantidad minima de jugadores : {cantMinima}");
+            }
+
+            public void PrintFull()
+            {
+                PrintSmall();
+            }
+
         }
 
         struct Jugador
@@ -701,9 +715,12 @@ namespace TP01
             int i = 1;
             foreach (var jug in jugadores)
             {
-                Console.WriteLine($"{i} -");
+                Console.WriteLine("******************");
+                Console.WriteLine();
+                Console.Write($"{i} - ");
                 jug.PrintSmall();
                 i++;
+                Console.WriteLine();
             }
         }
 
