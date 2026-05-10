@@ -341,17 +341,6 @@ namespace TP01
                 if(ValidaBool(segString))
                 {
                     seguro = ValidaSoN(segString);
-                    //switch (segString)
-                    //{
-                    //    case "s":
-                    //    case "S":
-                    //        seguro = true;
-                    //        break;
-                    //    case "n":
-                    //    case "N":
-                    //        seguro = false;
-                    //        break;
-                    //}
                     break;
                 }
                 Console.WriteLine("Ingreso no valido!!!");
@@ -365,17 +354,6 @@ namespace TP01
                 if (ValidaBool(afilString))
                 {
                     afiliado = ValidaSoN(afilString);
-                    //switch (afilString)
-                    //{
-                    //    case "s":
-                    //    case "S":
-                    //        afiliado = true;
-                    //        break;
-                    //    case "n":
-                    //    case "N":
-                    //        afiliado = false;
-                    //        break;
-                    //}
                     break;
                 }
                 else
@@ -440,19 +418,6 @@ namespace TP01
                         {
                             Console.WriteLine("Se ha anulado la baja del jugador");
                         }
-                        //switch (opc)
-                        //{
-                        //    case "s":
-                        //    case "S":
-                        //        jugadores.RemoveAt(opcNum);
-                        //        Console.WriteLine("El jugador se ha dado de baja");
-                        //        break;
-                        //    case "n":
-                        //    case "N":
-                        //        Console.WriteLine("Se ha anulado la baja del jugador");
-
-                        //        break;
-                        //}
                         break;
                     }
                     Console.WriteLine("Ingreso no valido!!!");
@@ -561,16 +526,19 @@ namespace TP01
             {
                 // copio los datos del jugador seleccionado a uno temporal
                 jugadorTemp = jugadores[opcNumJug];
-
+                Console.WriteLine();
                 Console.WriteLine($"Ud ha elegido al jugador");
+                Console.WriteLine();
                 jugadores[opcNumJug].PrintSmall();
+                Console.WriteLine();
                 if (jugadores[opcNumJug].equipAsig.Count > 0)   // verifca que tenga equipos 
                 {
                     Console.WriteLine("juega en los siguientes equipos:");
 
                     // imprimo el listdo de euipos en los que juega
                     ImprimirListado(jugadores[opcNumJug].equipAsig);
-                    opcNumEq = ElegirOpcion(equipos, "equipo");
+                    Console.WriteLine();
+                    opcNumEq = ElegirOpcion(jugadores[opcNumJug].equipAsig, "equipo");
 
                     // si la opcion no es salir 
                     if(opcNumEq != -1)
@@ -578,7 +546,7 @@ namespace TP01
                         //fuerzo una respuesta valida x S o N
                         while(true)
                         {
-                            Console.WriteLine($"Desea confirmar que va a quitar al jugador del equipo {equipos[opcNumEq]} (S/N)");
+                            Console.WriteLine($"Desea confirmar que va a quitar al jugador del equipo {jugadorTemp.equipAsig[opcNumEq].nombreEquipo} (S/N)");
                             opc = Console.ReadLine();
                             if (ValidaBool(opc))
                             {
@@ -592,10 +560,14 @@ namespace TP01
                                     jugadores[opcNumJug] = jugadorTemp;
 
                                     Console.WriteLine("Equipo quitado del jugador");
+                                    Espera();
+                                    LimpiarPantalla();
                                 }
                                 else // eliigio n, N
                                 {
                                     Console.WriteLine("Ud, ha anulado quitar el equipo");
+                                    Espera();
+                                    LimpiarPantalla();
                                 }
                                 break;
                             }
@@ -616,6 +588,8 @@ namespace TP01
                 else // eligio salir 
                 {
                     Console.WriteLine("El jugador no esta jugando en ningun equipo");
+                    Espera();
+                    LimpiarPantalla();
                 }
 
 
