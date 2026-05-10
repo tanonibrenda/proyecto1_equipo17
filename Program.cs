@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
@@ -314,12 +315,13 @@ namespace TP01
             nombre = Console.ReadLine();
             Console.WriteLine("Ingrese el apellido: ");
             apellido = Console.ReadLine();
-            Console.WriteLine("Ingrese la edad (1 a 99 años): ");
-            string edadString = Console.ReadLine();
+
 
             //loop para forzar edad valida
             while(true)
             {
+                Console.WriteLine("Ingrese la edad (1 a 99 años): ");
+                string edadString = Console.ReadLine();
                 if (VerificaIntRango(edadString, 1, 99))
                 {
                     edad = int.Parse(edadString);
@@ -338,17 +340,18 @@ namespace TP01
                 string segString = Console.ReadLine();
                 if(ValidaBool(segString))
                 {
-                    switch (segString)
-                    {
-                        case "s":
-                        case "S":
-                            seguro = true;
-                            break;
-                        case "n":
-                        case "N":
-                            seguro = false;
-                            break;
-                    }
+                    seguro = ValidaSoN(segString);
+                    //switch (segString)
+                    //{
+                    //    case "s":
+                    //    case "S":
+                    //        seguro = true;
+                    //        break;
+                    //    case "n":
+                    //    case "N":
+                    //        seguro = false;
+                    //        break;
+                    //}
                     break;
                 }
                 Console.WriteLine("Ingreso no valido!!!");
@@ -361,17 +364,18 @@ namespace TP01
                 string afilString = Console.ReadLine();
                 if (ValidaBool(afilString))
                 {
-                    switch (afilString)
-                    {
-                        case "s":
-                        case "S":
-                            afiliado = true;
-                            break;
-                        case "n":
-                        case "N":
-                            afiliado = false;
-                            break;
-                    }
+                    afiliado = ValidaSoN(afilString);
+                    //switch (afilString)
+                    //{
+                    //    case "s":
+                    //    case "S":
+                    //        afiliado = true;
+                    //        break;
+                    //    case "n":
+                    //    case "N":
+                    //        afiliado = false;
+                    //        break;
+                    //}
                     break;
                 }
                 else
@@ -422,21 +426,33 @@ namespace TP01
                 {
                     Console.WriteLine("Desea borrarlo? (S/N)");
                     opc = Console.ReadLine();
+                    //valida que elija s, S, n, N
                     if (ValidaBool(opc))
                     {
-                        switch (opc)
+                        //presiono s o S
+                        if (ValidaSoN(opc))
                         {
-                            case "s":
-                            case "S":
-                                jugadores.RemoveAt(opcNum);
-                                Console.WriteLine("El jugador se ha dado de baja");
-                                break;
-                            case "n":
-                            case "N":
-                                Console.WriteLine("Se ha anulado la baja del jugador");
-
-                                break;
+                            jugadores.RemoveAt(opcNum);
+                            Console.WriteLine("El jugador se ha dado de baja");
+                           
                         }
+                        else  // presiono n o N
+                        {
+                            Console.WriteLine("Se ha anulado la baja del jugador");
+                        }
+                        //switch (opc)
+                        //{
+                        //    case "s":
+                        //    case "S":
+                        //        jugadores.RemoveAt(opcNum);
+                        //        Console.WriteLine("El jugador se ha dado de baja");
+                        //        break;
+                        //    case "n":
+                        //    case "N":
+                        //        Console.WriteLine("Se ha anulado la baja del jugador");
+
+                        //        break;
+                        //}
                         break;
                     }
                     Console.WriteLine("Ingreso no valido!!!");
@@ -531,24 +547,75 @@ namespace TP01
 
         static void QuitarEquipoDeJugador(List<Jugador> jugadores, List<Equipo> equipos)
         {
-            int opcNum = -2;
+            string opc;
+            int opcNumJug = -1;
+            int opcNumEq = -1; 
+            Jugador jugadorTemp = new Jugador();
+
             Console.WriteLine("QUITAR EQUIPO DE JUGADOR");
             Console.WriteLine("Este es el listado de jugadores: ");
             ImprimirListado(jugadores);
-            opcNum = ElegirOpcion(jugadores, "jugador");
+            opcNumJug = ElegirOpcion(jugadores, "jugador");
 
-            if(opcNum != -1)  // si no eligio salir del menu
+            if(opcNumJug != -1)  // si no eligio salir del menu
             {
+                // copio los datos del jugador seleccionado a uno temporal
+                jugadorTemp = jugadores[opcNumJug];
+
                 Console.WriteLine($"Ud ha elegido al jugador");
-                jugadores[opcNum].PrintSmall();
-                if (jugadores[opcNum].equipAsig.Count > 0)   // verifca que tenga equipos 
+                jugadores[opcNumJug].PrintSmall();
+                if (jugadores[opcNumJug].equipAsig.Count > 0)   // verifca que tenga equipos 
                 {
                     Console.WriteLine("juega en los siguientes equipos:");
 
                     // imprimo el listdo de euipos en los que juega
-                    ImprimirListado(jugadores[opcNum].equipAsig);
+                    ImprimirListado(jugadores[opcNumJug].equipAsig);
+                    opcNumEq = ElegirOpcion(equipos, "equipo");
+
+                    // si la opcion no es salir 
+                    if(opcNumEq != -1)
+                    {
+                        //fuerzo una respuesta valida x S o N
+                        while(true)
+                        {
+                            Console.WriteLine($"Desea confirmar que va a quitar al jugador del equipo {equipos[opcNumEq]} (S/N)");
+                            opc = Console.ReadLine();
+                            if (ValidaBool(opc))
+                            {
+                                //si eleigio s, S
+                                if(ValidaSoN(opc))
+                                {
+                                    // remuevo al equipo del jugador asignado
+                                    jugadorTemp.equipAsig.RemoveAt(opcNumEq);
+
+                                    // piso al jugador en la list de jugadores
+                                    jugadores[opcNumJug] = jugadorTemp;
+
+                                    Console.WriteLine("Equipo quitado del jugador");
+                                }
+                                else // eliigio n, N
+                                {
+                                    Console.WriteLine("Ud, ha anulado quitar el equipo");
+                                }
+                                break;
+                            }
+                            else // no ingreso s, S, n, N
+                            {
+                                Console.WriteLine("Ingreso no valido");
+                            }
+                        }
 
 
+                    }
+                    else  //eligio salir 
+                    {
+
+                    }
+
+                }
+                else // eligio salir 
+                {
+                    Console.WriteLine("El jugador no esta jugando en ningun equipo");
                 }
 
 
@@ -1212,6 +1279,29 @@ namespace TP01
                 default:
                     return false;
             }
+        }
+
+        /// <summary>
+        /// funcion que se usa luego de ValidaBool para asegurarse que reciba solo S, s, N o n
+        /// </summary>
+        /// <param name="valor"></param>  valor que recibe (S, s, N o n
+        /// <returns> true si es S o s, y false si es n o N .. se pone default en false por sintaxis</returns>
+        static bool ValidaSoN(string valor)
+        {
+            switch (valor)
+            {
+                case "s":
+                case "S":
+                    return true;
+                    
+                case "n":
+                case "N":
+                    return false;
+
+                default:
+                    return false;
+            }
+
         }
 
 
