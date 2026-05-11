@@ -1,12 +1,22 @@
-﻿using System;
+﻿//**************************************************************************************************
+//*** GRUPO 17 ****///
+//*** TP01 ****///
+//*** PARTICIPANTES ****///
+//VARAS MONTES, Maria Isabel///
+//YOHENA TANONI, Brenda///
+//ARAUJO, Facundo///
+//************************************************************************************************** 
+
+using System;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Net;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
+using static TP01.Program;
+//using System.Data.SqlTypes;
+//using System.Linq;
+//using System.Net;
+//using System.Runtime.CompilerServices;
+//using System.Runtime.InteropServices.WindowsRuntime;
+//using System.Text;
+//using System.Threading.Tasks;
 
 namespace TP01
 {
@@ -92,7 +102,12 @@ namespace TP01
             public bool afiliado;
             public List<Equipo> equipAsig;
 
- 
+
+            /// <summary>
+            /// Verif si un jugador esta en un equipo
+            /// </summary>
+            /// <param name="equipo"></param>
+            /// <returns>true si esta, false si no esta</returns>
             public bool EstaEnEquipo(Equipo equipo)
             {
                 if(equipAsig!= null)
@@ -105,6 +120,11 @@ namespace TP01
                 }
                 return false;
             }
+
+            /// <summary>
+            /// agrega un equipo a un jugador
+            /// </summary>
+            /// <param name="equipo"></param> recibe un Equipo
             public void AgregarAEquipo(Equipo equipo)
             {
                 // verifico que no sea una lista vacia
@@ -117,6 +137,10 @@ namespace TP01
 
             }
 
+            /// <summary>
+            /// quita un equipo de un jugador
+            /// </summary>
+            /// <param name="equipo"></param>
             public void QuitarDeEquipo(Equipo equipo)
             {
                 if (equipAsig != null)
@@ -430,80 +454,252 @@ namespace TP01
 
         static void ModificarDatosJugador(List<Jugador> jugadores)
         {
-        //    int opcNum = -1;
-        //    string opc;
-        //    Console.WriteLine("Este es el listado de jugadores existentes: ");
-        //    Console.WriteLine();
+            string opc;
+            int opcNumJug = -1;
+            Jugador jugadorTemp = new Jugador();
 
-        //    ImprimirListado(jugadores);
+            Console.WriteLine("MODIFICAR DATOS DE JUGADOR");
+            Console.WriteLine("Este es el listado de jugadores: ");
+            //imprime el listado de jugadores para seleccionar uno
+            ImprimirListado(jugadores);
+            //verif la opcion elegida ajustada al index del list
+            opcNumJug = ElegirOpcion(jugadores, "jugador");
+            // si no eligio salir del menu
+            if (opcNumJug != -1)
+            {
+                // copio los datos del jugador seleccionado a uno temporal
+                jugadorTemp = jugadores[opcNumJug];
+                Console.WriteLine();
+                Console.WriteLine($"Ud ha elegido al jugador");
+                Console.WriteLine();
+                jugadores[opcNumJug].PrintSmall();
+                Console.WriteLine();
 
-        //    Console.WriteLine();
-        //    while (true)
-        //    {
+                //edicion DNI
+                while(true)
+                {
+                    Console.WriteLine("Desea modif el DNI (S/N)");
+                    opc = Console.ReadLine();
+                    //fuerzo ingreso de S, s, n o N
+                    if (ValidaBool(opc))
+                    {
+                        //elije s, S
+                        if(ValidaSoN(opc))
+                        {
+                            Console.WriteLine("ingrese nuevo dni");
+                            opc = Console.ReadLine();
+                            //valida que lo ingresado tenga formato dni
+                            if(VerificaDNIValido(opc))
+                            {
+                                //verif que no exista el dni 
+                                if(!DNIExistente(opc, jugadores))
+                                {
+                                    //modifico el dni 
+                                    jugadorTemp.dni = opc;
+                                    break;
+                                }
+                                else // el dni ya existe
+                                {
+                                    Console.WriteLine($"ya existe un jugador el dni {opc}");
+                                }
+                            }
+                            else //dni ingresado no es valido
+                            {
+                                Console.WriteLine("El dni ingresado no tiene formato valido");
+                            }
+                        }
+                        else //elije n, N
+                        {
+                            // sale del while de dni
+                            break;
+                        }
+                    }
 
-        //        Console.WriteLine("Elija el numero de jugador que desea modificar: (S p/salir)");
+                }
 
-        //        opc = Console.ReadLine();
+                //edicion nombre
+                while (true)
+                {
+                    Console.WriteLine("Desea modif el nombre (S/N)");
+                    opc = Console.ReadLine();
+                    //fuerzo ingreso de S, s, n o N
+                    if (ValidaBool(opc))
+                    {
+                        //elije s, S
+                        if (ValidaSoN(opc))
+                        {
+                            Console.WriteLine("ingrese nuevo nombre");
+                            opc = Console.ReadLine();
+                            jugadorTemp.nombre = opc;
+                            break;                         
+                        }
+                        else //elije n, N
+                        {
+                            // sale del while de nombre
+                            break;
+                        }
+                    }
+                }
 
-        //        verifica si quiere salir de la baja
-        //        if (opc == "s" || opc == "S")
-        //        {
-        //            LimpiarPantalla();
-        //            break;
-        //        }
-        //        if (ValidarOpcionElegida(jugadores, opc))
-        //        {
-        //            opcNum = int.Parse(opc) - 1; // lo ajusto al index 
-        //            break;
-        //        }
-        //        else
-        //        {
-        //            Console.WriteLine("Opcion Invalida!!!");
-        //        }
-        //    }
-        //    si no eligio salir del menu y eligio un jugador para modificar
-        //    if (opc != "s" && opc != "S")
-        //    {
-        //        Console.WriteLine("Ha elegido a este jugador");
-        //        jugadores[opcNum].PrintFull();
+                //edicion apellido
+                while (true)
+                {
+                    Console.WriteLine("Desea modif el apellido (S/N)");
+                    opc = Console.ReadLine();
+                    //fuerzo ingreso de S, s, n o N
+                    if (ValidaBool(opc))
+                    {
+                        //elije s, S
+                        if (ValidaSoN(opc))
+                        {
+                            Console.WriteLine("ingrese nuevo apellido");
+                            opc = Console.ReadLine();
+                            jugadorTemp.apellido = opc;
+                            break;
+                        }
+                        else //elije n, N
+                        {
+                            // sale del while de apellido
+                            break;
+                        }
+                    }
+                }
+                //edicion edad
 
-        //        loop para forzar la eleccion valida
-        //        while (true)
-        //        {
-        //            creo una nueva variable jugador para guardar los cambios
-        //           Jugador j = new Jugador();
-        //            Console.WriteLine("Ingrese el nuevo nombre");
-        //            j.nombre = Console.ReadLine();
-        //            Console.WriteLine("Ingrese el nuevo apellido");
-        //            j.apellido = Console.ReadLine();
-        //            Console.WriteLine("Ingrese la nueva edad");
-        //            j.edad = Console.ReadLine();
-        //            Console.WriteLine("Tiene Seguro");
-        //            j.edad = Console.ReadLine();
+                //edicion seguro
+                while (true)
+                {
+                    Console.WriteLine("Desea modif si esta asegurado (S/N)");
+                    opc = Console.ReadLine();
+                    //fuerzo ingreso de S, s, n o N
+                    if (ValidaBool(opc))
+                    {
+                        //elije s, S a modificacion
+                        if (ValidaSoN(opc))
+                        {
+                            // bucle para forzar ingreso de estado seguro
+                            while(true)
+                            {
+                                Console.WriteLine("Esta asegurado (S/N)");
+                                opc = Console.ReadLine();
+                                //fuerzo ingreso de s, S, n o N
+                                if (ValidaBool(opc))
+                                {
+                                    //si esta asgurado
+                                    if(ValidaSoN(opc))
+                                    {
+                                        jugadorTemp.seguro = true;
+                                    }
+                                    else //no esta asegurado
+                                    {
+                                        jugadorTemp.seguro = false;
+                                    }
+                                    // salgo del bucle ingreso seguro
+                                    break;
+                                }                                   
+                            }
+                            //sale del while seguro
+                            break;
+                        }
+                        else //elije n, N a modificacion
+                        {
+                            // sale del while de seguro
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ingreso no valido!!!");
+                    }
+                }
 
+                //edicion afiliado
+                while (true)
+                {
+                    Console.WriteLine("Desea modif si esta afiliado (S/N)");
+                    opc = Console.ReadLine();
+                    //fuerzo ingreso de S, s, n o N
+                    if (ValidaBool(opc))
+                    {
+                        //elije s, S a modificacion
+                        if (ValidaSoN(opc))
+                        {
+                            // bucle para forzar ingreso de estado afiliado
+                            while (true)
+                            {
+                                Console.WriteLine("Esta afiliado (S/N)");
+                                opc = Console.ReadLine();
+                                //fuerzo ingreso de s, S, n o N
+                                if (ValidaBool(opc))
+                                {
+                                    //si esta afiliado
+                                    if (ValidaSoN(opc))
+                                    {
+                                        jugadorTemp.seguro = true;
+                                    }
+                                    else //no esta afiliado
+                                    {
+                                        jugadorTemp.seguro = false;
+                                    }
+                                    // salgo del bucle ingreso afiliado
+                                    break;
+                                }
+                            }
+                            //sale del while afiliado
+                            break;
+                        }
+                        else //elije n, N a modificacion
+                        {
+                            // sale del while de afiliado
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ingreso no valido!!!");
+                    }
+                }
 
-        //            if (ValidaBool(opc))
-        //            {
-        //                switch (opc)
-        //                {
-        //                    case "s":
-        //                    case "S":
-        //                        jugadores.RemoveAt(opcNum);
-        //                        Console.WriteLine("El jugador se ha dado de baja");
-        //                        break;
-        //                    case "n":
-        //                    case "N":
-        //                        Console.WriteLine("Se ha anulado la baja del jugador");
+                Console.WriteLine("El jugador tenia estos datos:");
+                jugadores[opcNumJug].PrintFull();
+                Console.WriteLine();
+                Console.WriteLine("Con las modificaciones tendra estos datos:");
+                jugadorTemp.PrintFull();
 
-        //                        break;
-        //                }
-        //                break;
-        //            }
-        //            Console.WriteLine("Ingreso no valido!!!");
-        //        }
-        //        Espera();
-        //        LimpiarPantalla();
-        //    }
+                while(true)
+                {
+                    Console.WriteLine("Desea modificarlo (S/N)");
+                    opc = Console.ReadLine();
+                    //fuerzo ingreso de S, s, n o N
+                    if (ValidaBool(opc))
+                    {
+                        //elije s, S a modificacion
+                        if (ValidaSoN(opc))
+                        {
+                            // piso al jugador en el listado global con los nuevos datos 
+                            jugadores[opcNumJug] = jugadorTemp;
+                            Console.WriteLine("Los datos del jugador han sido modificados");
+                            Espera();
+                            LimpiarPantalla();
+                            //sale del bucle de confirmacion de modif
+                            break;
+                        }
+                        else //elije n, N a modificacion
+                        {
+                            Console.WriteLine("Se ha cancelado la modif de datos");
+                            Espera();
+                            LimpiarPantalla();
+                            //sale del bucle de confirmacion de modif
+                            break;
+                        }
+                    }
+                }
+                
+      
+            }
+
+            LimpiarPantalla();
+            
         }
         
         /// <summary>
@@ -573,7 +769,7 @@ namespace TP01
                                 if (ValidaSoN(opc))
                                 {
                                     // agrego el equipo al jugador
-                                    jugadorTemp.equipAsig.Add(equiposDisponibles[opcNumEq]);
+                                    jugadorTemp.AgregarAEquipo(equiposDisponibles[opcNumEq]);
 
                                     // piso al jugador en la list de jugadores
                                     jugadores[opcNumJug] = jugadorTemp;
@@ -665,7 +861,7 @@ namespace TP01
                                 if(ValidaSoN(opc))
                                 {
                                     // remuevo al equipo del jugador asignado
-                                    jugadorTemp.equipAsig.RemoveAt(opcNumEq);
+                                    jugadorTemp.QuitarDeEquipo(jugadorTemp.equipAsig[opcNumEq]);
 
                                     // piso al jugador en la list de jugadores
                                     jugadores[opcNumJug] = jugadorTemp;

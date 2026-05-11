@@ -28,169 +28,79 @@ namespace TP01
             "River",
             "Boca",
             "Racing",
-            "Independiente",
-            "San Lorenzo"
+            "Independiente"
         };
 
         public static void CargaTest(
             List<Program.Jugador> jugadores,
             List<Program.Equipo> equipos)
         {
-            // ==========================================
+            jugadores.Clear();
+            equipos.Clear();
+
+            // =====================================================
             // CREAR EQUIPOS
-            // ==========================================
+            // =====================================================
+            //
+            // Cada club tendrá:
+            // 2 Infantiles
+            // 2 Cadetes
+            // 2 Juveniles
+            // 2 Primera
+            // 1 Veteranos
+            //
+            // Total por club: 9 equipos
+            // Total general: 36 equipos
+            //
+            // =====================================================
 
-            int indiceCategoria = 0;
-
-            for (int club = 0; club < clubes.Length; club++)
+            string[] categorias =
             {
-                for (int letra = 0; letra < 2; letra++)
+                "Infantiles",
+                "Infantiles",
+
+                "Cadetes",
+                "Cadetes",
+
+                "Juveniles",
+                "Juveniles",
+
+                "Primera",
+                "Primera",
+
+                "Veteranos"
+            };
+
+            for (int c = 0; c < clubes.Length; c++)
+            {
+                for (int i = 0; i < categorias.Length; i++)
                 {
-                    Program.Equipo eq = new Program.Equipo();
+                    Program.Equipo eq =
+                        new Program.Equipo();
 
-                    char sufijo = (char)('A' + letra);
+                    char letra =
+                        (char)('A' + i);
 
-                    eq.nombreClub = clubes[club];
+                    eq.nombreClub =
+                        clubes[c];
 
                     eq.nombreEquipo =
-                        clubes[club] + " Equipo " + sufijo;
+                        clubes[c] + " Equipo " + letra;
 
                     eq.categoria =
-                        Program.categoria[indiceCategoria];
+                        categorias[i];
 
                     eq.cantMinima = 8;
 
                     equipos.Add(eq);
-
-                    indiceCategoria++;
-
-                    if (indiceCategoria >= Program.categoria.Length)
-                    {
-                        indiceCategoria = 0;
-                    }
                 }
             }
 
-            // ==========================================
-            // CREAR 100 JUGADORES
-            // ==========================================
+            // =====================================================
+            // CREAR JUGADORES
+            // =====================================================
 
-            for (int i = 0; i < 100; i++)
-            {
-                Program.Jugador jug = new Program.Jugador();
-
-                // DNI verosímil
-                jug.dni = rnd.Next(30000000, 47000000).ToString();
-
-                jug.nombre =
-                    nombres[rnd.Next(nombres.Length)];
-
-                jug.apellido =
-                    apellidos[rnd.Next(apellidos.Length)];
-
-                jug.edad = rnd.Next(10, 40);
-
-                jug.seguro = rnd.Next(0, 2) == 1;
-
-                jug.afiliado = rnd.Next(0, 2) == 1;
-
-                jug.equipAsig =
-                    new List<Program.Equipo>();
-
-                jugadores.Add(jug);
-            }
-
-            // ==========================================
-            // ASIGNAR 90 JUGADORES
-            // ==========================================
-
-            // equipos 8 y 9 quedarán vacíos
-
-            for (int i = 0; i < 90; i++)
-            {
-                int indiceEquipo = rnd.Next(0, 8);
-
-                Program.Jugador jug = jugadores[i];
-
-                jug.AgregarAEquipo(equipos[indiceEquipo]);
-
-                jugadores[i] = jug;
-            }
-
-            // ==========================================
-            // DEJAR 2 EQUIPOS BAJO MINIMO
-            // ==========================================
-
-            int contador7 = 0;
-            int contador8 = 0;
-
-            for (int i = 0; i < jugadores.Count; i++)
-            {
-                Program.Jugador jug = jugadores[i];
-
-                if (jug.equipAsig != null &&
-                    jug.equipAsig.Count > 0)
-                {
-                    string nombreEquipo =
-                        jug.equipAsig[0].nombreEquipo;
-
-                    if (nombreEquipo == equipos[6].nombreEquipo)
-                    {
-                        contador7++;
-
-                        if (contador7 > 5)
-                        {
-                            jug.equipAsig.Clear();
-                        }
-                    }
-
-                    if (nombreEquipo == equipos[7].nombreEquipo)
-                    {
-                        contador8++;
-
-                        if (contador8 > 4)
-                        {
-                            jug.equipAsig.Clear();
-                        }
-                    }
-
-                    jugadores[i] = jug;
-                }
-            }
-        }
-
-        public static void CargaTestCorta(
-    List<Program.Jugador> jugadores,
-    List<Program.Equipo> equipos)
-        {
-            // ==========================================
-            // CREAR 3 EQUIPOS
-            // ==========================================
-
-            for (int i = 0; i < 3; i++)
-            {
-                Program.Equipo eq = new Program.Equipo();
-
-                char sufijo = (char)('A' + i);
-
-                eq.nombreClub = clubes[i];
-
-                eq.nombreEquipo =
-                    clubes[i] + " Equipo " + sufijo;
-
-                eq.categoria =
-                    Program.categoria[i];
-
-                eq.cantMinima = 4;
-
-                equipos.Add(eq);
-            }
-
-            // ==========================================
-            // CREAR 10 JUGADORES
-            // ==========================================
-
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 120; i++)
             {
                 Program.Jugador jug =
                     new Program.Jugador();
@@ -205,7 +115,8 @@ namespace TP01
                 jug.apellido =
                     apellidos[rnd.Next(apellidos.Length)];
 
-                jug.edad = rnd.Next(10, 40);
+                jug.edad =
+                    rnd.Next(10, 41);
 
                 jug.seguro =
                     rnd.Next(0, 2) == 1;
@@ -219,23 +130,348 @@ namespace TP01
                 jugadores.Add(jug);
             }
 
-            // ==========================================
-            // ASIGNAR SOLO 7 JUGADORES
-            // ==========================================
+            // =====================================================
+            // ASIGNAR JUGADORES A EQUIPOS
+            // =====================================================
+            //
+            // Reglas:
+            //
+            // - Puede estar en varios equipos
+            // - SOLO del mismo club
+            // - Debe cumplir edad de categoría
+            // - Algunos quedan sin equipo
+            //
+            // =====================================================
 
-            // quedan 3 sin equipo
-            // equipo 3 queda vacío
-
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < jugadores.Count; i++)
             {
-                int indiceEquipo =
-                    rnd.Next(0, 2);
-
                 Program.Jugador jug =
                     jugadores[i];
 
-                jug.AgregarAEquipo(
-                    equipos[indiceEquipo]);
+                // 20% sin equipo
+                if (rnd.Next(0, 100) < 20)
+                {
+                    continue;
+                }
+
+                // elegir club para el jugador
+                string clubJugador =
+                    clubes[rnd.Next(clubes.Length)];
+
+                // cantidad de equipos:
+                // 1, 2 o 3
+                int cantidadEquipos =
+                    rnd.Next(1, 4);
+
+                int intentos = 0;
+
+                while (
+                    jug.equipAsig.Count < cantidadEquipos
+                    && intentos < 30)
+                {
+                    intentos++;
+
+                    Program.Equipo eq =
+                        equipos[rnd.Next(equipos.Count)];
+
+                    // mismo club
+                    if (eq.nombreClub != clubJugador)
+                    {
+                        continue;
+                    }
+
+                    // evitar repetidos
+                    bool yaExiste = false;
+
+                    for (int j = 0;
+                        j < jug.equipAsig.Count;
+                        j++)
+                    {
+                        if (
+                            jug.equipAsig[j].nombreEquipo
+                            == eq.nombreEquipo)
+                        {
+                            yaExiste = true;
+                        }
+                    }
+
+                    if (yaExiste)
+                    {
+                        continue;
+                    }
+
+                    // validar edad
+                    if (
+                        CumpleEdad(
+                            jug.edad,
+                            eq.categoria))
+                    {
+                        jug.AgregarAEquipo(eq);
+                    }
+                }
+
+                jugadores[i] = jug;
+            }
+
+            // =====================================================
+            // DEJAR ALGUNOS EQUIPOS BAJO MINIMO
+            // =====================================================
+
+            DejarEquipoConPocosJugadores(
+                jugadores,
+                equipos[0],
+                5);
+
+            DejarEquipoConPocosJugadores(
+                jugadores,
+                equipos[10],
+                4);
+        }
+
+        public static void CargaTestCorta(
+    List<Program.Jugador> jugadores,
+    List<Program.Equipo> equipos)
+        {
+            jugadores.Clear();
+            equipos.Clear();
+
+            // =====================================================
+            // CREAR EQUIPOS
+            // =====================================================
+
+            string[] categorias =
+            {
+        "Infantiles",
+        "Infantiles",
+
+        "Cadetes",
+        "Cadetes",
+
+        "Juveniles",
+        "Juveniles",
+
+        "Primera",
+        "Primera",
+
+        "Veteranos"
+    };
+
+            for (int c = 0; c < clubes.Length; c++)
+            {
+                for (int i = 0; i < categorias.Length; i++)
+                {
+                    Program.Equipo eq =
+                        new Program.Equipo();
+
+                    char letra =
+                        (char)('A' + i);
+
+                    eq.nombreClub =
+                        clubes[c];
+
+                    eq.nombreEquipo =
+                        clubes[c] + " Equipo " + letra;
+
+                    eq.categoria =
+                        categorias[i];
+
+                    eq.cantMinima = 4;
+
+                    equipos.Add(eq);
+                }
+            }
+
+            // =====================================================
+            // CREAR 25 JUGADORES
+            // =====================================================
+
+            for (int i = 0; i < 25; i++)
+            {
+                Program.Jugador jug =
+                    new Program.Jugador();
+
+                jug.dni =
+                    rnd.Next(30000000, 47000000)
+                    .ToString();
+
+                jug.nombre =
+                    nombres[rnd.Next(nombres.Length)];
+
+                jug.apellido =
+                    apellidos[rnd.Next(apellidos.Length)];
+
+                jug.edad =
+                    rnd.Next(10, 41);
+
+                jug.seguro =
+                    rnd.Next(0, 2) == 1;
+
+                jug.afiliado =
+                    rnd.Next(0, 2) == 1;
+
+                jug.equipAsig =
+                    new List<Program.Equipo>();
+
+                jugadores.Add(jug);
+            }
+
+            // =====================================================
+            // ASIGNAR EQUIPOS
+            // =====================================================
+
+            for (int i = 0; i < jugadores.Count; i++)
+            {
+                Program.Jugador jug =
+                    jugadores[i];
+
+                // algunos sin equipo
+                if (rnd.Next(0, 100) < 25)
+                {
+                    continue;
+                }
+
+                string clubJugador =
+                    clubes[rnd.Next(clubes.Length)];
+
+                // entre 1 y 2 equipos
+                int cantidadEquipos =
+                    rnd.Next(1, 3);
+
+                int intentos = 0;
+
+                while (
+                    jug.equipAsig.Count < cantidadEquipos
+                    && intentos < 20)
+                {
+                    intentos++;
+
+                    Program.Equipo eq =
+                        equipos[rnd.Next(equipos.Count)];
+
+                    // mismo club
+                    if (eq.nombreClub != clubJugador)
+                    {
+                        continue;
+                    }
+
+                    // evitar repetidos
+                    bool existe = false;
+
+                    for (int j = 0;
+                        j < jug.equipAsig.Count;
+                        j++)
+                    {
+                        if (
+                            jug.equipAsig[j].nombreEquipo
+                            == eq.nombreEquipo)
+                        {
+                            existe = true;
+                        }
+                    }
+
+                    if (existe)
+                    {
+                        continue;
+                    }
+
+                    // validar edad
+                    if (
+                        CumpleEdad(
+                            jug.edad,
+                            eq.categoria))
+                    {
+                        jug.AgregarAEquipo(eq);
+                    }
+                }
+
+                jugadores[i] = jug;
+            }
+
+            // =====================================================
+            // DEJAR ALGUNOS EQUIPOS VACIOS O BAJO MINIMO
+            // =====================================================
+
+            DejarEquipoConPocosJugadores(
+                jugadores,
+                equipos[0],
+                2);
+
+            DejarEquipoConPocosJugadores(
+                jugadores,
+                equipos[15],
+                1);
+        }
+
+        // =====================================================
+        // VALIDAR EDAD SEGUN CATEGORIA
+        // =====================================================
+
+        static bool CumpleEdad(
+            int edad,
+            string categoria)
+        {
+            switch (categoria)
+            {
+                case "Infantiles":
+                    return edad <= 13;
+
+                case "Cadetes":
+                    return edad >= 13
+                        && edad <= 16;
+
+                case "Juveniles":
+                    return edad >= 16
+                        && edad <= 18;
+
+                case "Primera":
+                    return edad >= 18;
+
+                case "Veteranos":
+                    return edad >= 35;
+            }
+
+            return false;
+        }
+
+        // =====================================================
+        // DEJAR EQUIPOS BAJO MINIMO
+        // =====================================================
+
+        static void DejarEquipoConPocosJugadores(
+            List<Program.Jugador> jugadores,
+            Program.Equipo equipo,
+            int cantidadMaxima)
+        {
+            int contador = 0;
+
+            for (int i = 0;
+                i < jugadores.Count;
+                i++)
+            {
+                Program.Jugador jug =
+                    jugadores[i];
+
+                if (jug.equipAsig == null)
+                {
+                    continue;
+                }
+
+                for (int j = jug.equipAsig.Count - 1;
+                    j >= 0;
+                    j--)
+                {
+                    if (
+                        jug.equipAsig[j].nombreEquipo
+                        == equipo.nombreEquipo)
+                    {
+                        contador++;
+
+                        if (contador > cantidadMaxima)
+                        {
+                            jug.equipAsig.RemoveAt(j);
+                        }
+                    }
+                }
 
                 jugadores[i] = jug;
             }
