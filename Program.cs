@@ -85,9 +85,10 @@ namespace TP01
                 Console.WriteLine($"Cantidad minima de jugadores : {cantMinima}");
             }
 
-            public void PrintFull()
+            public void PrintFull(List<Jugador> jugadores)
             {
                 PrintSmall();
+                Console.WriteLine($"Actualmente hay {CantidadJugadoresEquipo(jugadores)} jugadores en este equipo");
             }
 
         }
@@ -283,11 +284,97 @@ namespace TP01
 
         }
 
-        static void BajaEquipo()
+        static void BajaEquipo(List<Equipo> equipos, List<Jugador> jugadores)
         {
+            int opcNumEq;
+            string opc;
+            List<Jugador> jugadoresAQuitar = new List<Jugador>();
+            Console.WriteLine("BAJA DE EQUIPOS");
+            Console.WriteLine("Este es el listado de Equipos: ");
+            Console.WriteLine();
+            //imprime el listado de equipos para seleccionar uno
+            ImprimirListado(equipos);
+            //verif la opcion elegida ajustada al index del list
+            opcNumEq = ElegirOpcion(equipos, "equipo");
+            //// si no eligio salir del menu
+            if (opcNumEq != -1)
+            {
+                Console.WriteLine("Ha elegido a este equipo");
+                equipos[opcNumEq].PrintFull(jugadores);
+                Console.WriteLine();
+                //recorro todos los jugadores de la liga
+                foreach (Jugador jug in jugadores)
+                {
+                    //verifico si este jugador juega en este equipo
+                    if (jug.EstaEnEquipo(equipos[opcNumEq]))
+                    {
+                        //lo agrego al listado de quitar
+                        jugadoresAQuitar.Add(jug);
+                    }
+                }
+                //si el equipo tiene jugadores asignados 
+                if (jugadoresAQuitar.Count > 0)
+                {
+                    Console.WriteLine("Si borra el equipo, el mismo se removera de los siguientes jugadores: ");
+                    foreach (Jugador jug in jugadoresAQuitar)
+                    {
+                        jug.PrintSmall();
+                    }
+                }
+                //loop para forzar la eleccion valida
+                while (true)
+                {
+                    Console.WriteLine("Desea borrarlo? (S/N)");
+                    opc = Console.ReadLine();
+                    //valida que elija s, S, n, N
+                    if (ValidaBool(opc))
+                    {
+                        //presiono s o S
+                        if (ValidaSoN(opc))
+                        {
+                            //si tiene jugadores a quitar
+                            if(jugadoresAQuitar.Count > 0)
+                            {
+                                //recorro todo el listado de jugadores de la liga
+                                for(int i = 0; i < jugadores.Count; i++)
+                                {
+                                    //copio el jugador a uno temporal 
+                                    Jugador jug = jugadores[i];
 
+                                    //si el jugador esta en el equipo a borrar 
+                                    if (jug.EstaEnEquipo(equipos[opcNumEq]))
+                                    {
+                                        //recorro los equipos asignados del jugador
+                                        for (int j = jug.equipAsig.Count - 1; j >= 0; j--)
+                                        {
+                                            //si es el equipo a borrar
+                                            if (jug.equipAsig[j].nombreEquipo == equipos[opcNumEq].nombreEquipo)
+                                            {
+                                                //lo quito del listado de equipos del jugador
+                                                jug.equipAsig.RemoveAt(j);
+                                            }
+                                        }
+                                        //piso al jugador del listado con el temporal para actualizarlo
+                                        jugadores[i] = jug;
+                                    }                   
+                                }
+                            }
+
+                          //borro al equipo
+                          equipos.RemoveAt(opcNumEq);
+                        }
+                        else  // presiono n o N
+                        {
+                            Console.WriteLine("Se ha anulado la baja del equipo");
+                        }
+                        break;
+                    }
+                    Console.WriteLine("Ingreso no valido!!!");
+                }
+                Espera();
+                LimpiarPantalla();
+            }
         }
-
         static void ModificarDatosEquipo()
         {
 
@@ -1459,7 +1546,7 @@ namespace TP01
                     break;
 
                 case AccionMenu.BajaEquipo:
-                    BajaEquipo();
+                    BajaEquipo(equipos, jugadores);
                     break;
 
                 case AccionMenu.ModificarDatosEquipo:
