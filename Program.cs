@@ -505,11 +505,120 @@ namespace TP01
         //        LimpiarPantalla();
         //    }
         }
+        
+        /// <summary>
+        /// agrega un equipo a un jugador
+        /// </summary>
+        /// <param name="jugadores"></param> Listado con todos los jugadores
+        /// <param name="equipos"></param>  Listado con todos los equipos
         static void AgregarEquipoAJugador(List<Jugador> jugadores, List<Equipo> equipos)
         {
+            string opc;
+            int opcNumJug = -1;
+            int opcNumEq = -1;
+            List<Equipo> equiposDisponibles = new List<Equipo>();
+            Jugador jugadorTemp = new Jugador();
+
+            Console.WriteLine("AGREGAR EQUIPO A JUGADOR");
+            Console.WriteLine("Este es el listado de jugadores: ");
+            //imprime el listado de jugadores para seleccionar uno
+            ImprimirListado(jugadores);
+            //verif la opcion elegida ajustada al index del list
+            opcNumJug = ElegirOpcion(jugadores, "jugador");
+            // si no eligio salir del menu
+            if (opcNumJug != -1)  
+            {
+                // copio los datos del jugador seleccionado a uno temporal
+                jugadorTemp = jugadores[opcNumJug];
+                Console.WriteLine();
+                Console.WriteLine($"Ud ha elegido al jugador");
+                Console.WriteLine();
+                jugadores[opcNumJug].PrintSmall();
+                Console.WriteLine();
+                if (jugadores[opcNumJug].equipAsig.Count > 0)   // verifca que tenga equipos 
+                {
+                    Console.WriteLine("juega en los siguientes equipos:");
+
+                    // imprimo el listdo de euipos en los que juega
+                    ImprimirListado(jugadores[opcNumJug].equipAsig);
+                    Console.WriteLine();
+                }
+                else //no tiene nignun equipo 
+                {
+                    Console.WriteLine("El jugador no esta jugando en ningun equipo");
+                    Console.WriteLine();
+                }
+
+                //busco el listado de equipos disp para el jugador
+                equiposDisponibles = BuscarEquiposDisponibles(jugadorTemp, equipos);
+
+                //verifico que tenga equipos disponibles para agregar
+                if(equiposDisponibles.Count >0)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Este es el listado de equipos disponibles: ");
+                    ImprimirListado(equiposDisponibles);
+                    opcNumEq = ElegirOpcion(equiposDisponibles, "equipo");
+                    // si la opcion no es salir 
+                    if (opcNumEq != -1)
+                    {
+                        //fuerzo una respuesta valida x S o N
+                        while (true)
+                        {
+                            Console.WriteLine($"Desea confirmar que va a agregar el jugador al equipo {equiposDisponibles[opcNumEq].nombreEquipo} (S/N)");
+                            opc = Console.ReadLine();
+                            if (ValidaBool(opc))
+                            {
+                                //si eleigio s, S
+                                if (ValidaSoN(opc))
+                                {
+                                    // agrego el equipo al jugador
+                                    jugadorTemp.equipAsig.Add(equiposDisponibles[opcNumEq]);
+
+                                    // piso al jugador en la list de jugadores
+                                    jugadores[opcNumJug] = jugadorTemp;
+
+                                    Console.WriteLine("Equipo agreado al jugador");
+                                    Espera();
+                                    LimpiarPantalla();
+                                }
+                                else // eliigio n, N
+                                {
+                                    Console.WriteLine("Ud, ha anulado agregar el equipo");
+                                    Espera();
+                                    LimpiarPantalla();
+                                }
+                                break;
+                            }
+                            else // no ingreso s, S, n, N
+                            {
+                                Console.WriteLine("Ingreso no valido");
+                            }
+                        }
+
+
+                    }
+                    else  //eligio salir 
+                    {
+
+                    }
+
+                }
+                else // no tiene equipos disp para agregar
+                {
+                    Console.WriteLine("Actualmente no hay nuevos equipos disponibles para este jugador");
+                    Espera();
+                    LimpiarPantalla();
+                }
+
+            }
 
         }
-
+        /// <summary>
+        /// funcion que quita un equipo de un jugador
+        /// </summary>
+        /// <param name="jugadores"></param> listado con todos los jugadores de la liga
+        /// <param name="equipos"></param> listado con todos los equipos de la liga 
         static void QuitarEquipoDeJugador(List<Jugador> jugadores, List<Equipo> equipos)
         {
             string opc;
@@ -519,7 +628,9 @@ namespace TP01
 
             Console.WriteLine("QUITAR EQUIPO DE JUGADOR");
             Console.WriteLine("Este es el listado de jugadores: ");
+            //imprime el listado de jugadores para seleccionar uno
             ImprimirListado(jugadores);
+            //verif la opcion elegida ajustada al index del list
             opcNumJug = ElegirOpcion(jugadores, "jugador");
 
             if(opcNumJug != -1)  // si no eligio salir del menu
@@ -1156,7 +1267,11 @@ namespace TP01
 
             return resultado;
         }
-
+        /// <summary>
+        /// obtiene el indice del enum categoria
+        /// </summary>
+        /// <param name="edad"></param>  recibe el int de la edad del jugador
+        /// <returns></returns> el indice del enum que corresponde a la edad 
         static int ObtenerIndiceCategoria(int edad)
         {
             if (edad < 13) return 0;          // Infantiles
@@ -1164,6 +1279,31 @@ namespace TP01
             else if (edad < 18) return 2;     // Juveniles
             else if (edad < 35) return 3;     // Primera
             else return 4;                    // Veteranos
+        }
+        /// <summary>
+        /// convierte la categoria en la edad max permitida
+        /// </summary>
+        /// <param name="categoria"></param> string de cateogira 
+        /// <returns>edad maxima permitida para la categoria</returns>
+        static int ObtenerEdadMaxCategoria(String categoria)
+        {
+            int edadMax = -1;
+            switch (categoria)
+            {
+                case "Infantiles":
+                    edadMax = 12;
+                    break;
+                case "Cadetes":
+                    edadMax = 15;
+                    break;
+                case "Juveniles":
+                    edadMax = 17;
+                    break;
+                default:
+                    edadMax = 99;
+                    break;
+            }
+            return edadMax;
         }
 
         /// <summary>
@@ -1315,8 +1455,58 @@ namespace TP01
             }
 
         }
+        /// <summary>
+        /// Devuelve un Listado de equipos a los cuales puedo agregar al jugador
+        /// </summary>
+        /// <param name="jugador"></param> jugador al que quiero agregar un nuevo equipo
+        /// <param name="equipos"></param> el listado de todos los equipos de la liga
+        /// <returns>el listado de equipos a los que lo puedo agregar</returns>
+        static List<Equipo> BuscarEquiposDisponibles(Jugador jugador,  List<Equipo> equipos)
+        {
+            //creto una variable con el nombre de club si ya tiene equipos asig
+            string nombreClub = "";
+            //creo una list de equipos disponibles para devolver
+            List<Equipo> equiposDisp = new List<Equipo>();
+            // si ya tiene equipos asignados obtengo el club *** solo puede jugar en un club
+            if(jugador.equipAsig.Count > 0)
+            {
+                nombreClub = jugador.equipAsig[0].nombreClub;
+            }
 
+            foreach(Equipo equip in equipos)
+            {
+                //si el jugador ya juega en un club y el club del equipo es otro
+                if(nombreClub != "" && equip.nombreClub != nombreClub)
+                {
+                    continue;
+                }
 
+                //si la edad del jugador es menor o igual a la de la categoria del equipo 
+                if(jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria))
+                {
+                    bool yaEsta = false;
+                    
+                    foreach(Equipo asig in jugador.equipAsig)
+                    {
+                        //recorro los equipos que ya tiene asig el jugador para ver si equip ya se encuentra
+                        if(asig.nombreEquipo == equip.nombreEquipo)
+                        {
+                            yaEsta = true;
+                            break;
+                        }
+                    }
+
+                    //si no se encontraba lo agrego al list
+                    if(!yaEsta)
+                    {
+                        equiposDisp.Add(equip);
+                    }
+                    
+                }
+            }
+
+            return equiposDisp;
+        }   
 
 
         //**************************************************************************************************
