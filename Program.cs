@@ -565,11 +565,97 @@ namespace TP01
                     }
                 }
                 //edicion edad
+                while(true)
+                {
+                    Console.WriteLine("Desea modif la edad ? (S/N)");
+                    opc = Console.ReadLine();
+                    //fuerzo ingreso de S, s, n o N
+                    if (ValidaBool(opc))
+                    {
+                        //elije s, S a modificacion
+                        if (ValidaSoN(opc))
+                        {
+                            // bucle fuerza ingreso edad valido
+                            while(true)
+                            {
+                                Console.WriteLine();
+                                Console.WriteLine("Ingrese la nueva edad: (1 a 99)");
+                                opc = Console.ReadLine();
+
+                                //verifica edad dentro de rango valido
+                                if (VerificaIntRango(opc, 1, 99))
+                                {
+                                    //asigno la edad a una nueva variable
+                                    int newEdad = int.Parse(opc);
+                                    //creo 2 list de equipos para ver si modif los equipos asignados 
+                                    List<Equipo> equiposASacar = new List<Equipo>();
+                                    List<Equipo> equiposRestantes = new List<Equipo>();
+
+                                    //recorro el listado de equipos asignados para ver si debe dejar alguno
+                                    foreach(Equipo equip in jugadores[opcNumJug].equipAsig)
+                                    {
+                                        //si la nueva edad es <= a la cat del equipo asig
+                                        if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria))
+                                        {
+                                            equiposRestantes.Add(equip);
+                                        }
+                                        else
+                                        {
+                                            equiposASacar.Add(equip);
+                                        }
+                                    }
+                                    //si con el cambio de edad se eliminarian equipos
+                                    if(equiposASacar.Count > 0)
+                                    {
+                                        Console.WriteLine($"Con la nueva edad de {newEdad} el jugador no puede jugar mas en estos equipos:");
+                                        foreach(Equipo equip in equiposASacar)
+                                        {
+                                            Console.WriteLine(equip.nombreEquipo);
+                                        }
+                                        //todavia tendria equipos restantes
+                                        if(equiposRestantes.Count > 0)
+                                        {
+                                            Console.WriteLine("y sigue jugando en: ");
+                                            foreach(Equipo equip in equiposRestantes)
+                                            {
+                                                Console.WriteLine(equip.nombreEquipo);
+                                            }
+                                        }
+                                        else //no le quedarian equipos restantes
+                                        {
+                                            Console.WriteLine("Quedando sin estar asignado a ningun equipo");
+                                        }
+
+                                    }
+                                    //guardo los cambios
+                                    jugadorTemp.edad = newEdad;
+                                    jugadorTemp.equipAsig = equiposRestantes;
+                                    break;
+                                }
+                                else // ingreso no valido de edad
+                                {
+                                    Console.WriteLine("Ingreso invalido!!!");
+                                }
+                            }
+
+
+                        }
+
+                        //sale del break de edad 
+                        break;
+                    }
+                    else //no ingreso s, S, n o N
+                    {
+                        Console.WriteLine("Ingreso no valido!!!");
+                    }
+                }
+
+
 
                 //edicion seguro
                 while (true)
                 {
-                    Console.WriteLine("Desea modif si esta asegurado (S/N)");
+                    Console.WriteLine("Desea modif si esta asegurado ? (S/N)");
                     opc = Console.ReadLine();
                     //fuerzo ingreso de S, s, n o N
                     if (ValidaBool(opc))
@@ -598,16 +684,18 @@ namespace TP01
                                     break;
                                 }                                   
                             }
-                            //sale del while seguro
-                            break;
+                            ////sale del while seguro
+                            //break;
                         }
-                        else //elije n, N a modificacion
-                        {
-                            // sale del while de seguro
-                            break;
-                        }
+                        //else //elije n, N a modificacion
+                        //{
+                        //    // sale del while de seguro
+                        //    break;
+                        //}
+                        // sale del while de seguro
+                        break;
                     }
-                    else
+                    else //no ingreso s, S, n o N
                     {
                         Console.WriteLine("Ingreso no valido!!!");
                     }
@@ -666,9 +754,10 @@ namespace TP01
                 Console.WriteLine("Con las modificaciones tendra estos datos:");
                 jugadorTemp.PrintFull();
 
+                //bucle de confirmacion de cambios
                 while(true)
                 {
-                    Console.WriteLine("Desea modificarlo (S/N)");
+                    Console.WriteLine("Desea guardar los cambios? (S/N)");
                     opc = Console.ReadLine();
                     //fuerzo ingreso de S, s, n o N
                     if (ValidaBool(opc))
@@ -676,7 +765,7 @@ namespace TP01
                         //elije s, S a modificacion
                         if (ValidaSoN(opc))
                         {
-                            // piso al jugador en el listado global con los nuevos datos 
+
                             jugadores[opcNumJug] = jugadorTemp;
                             Console.WriteLine("Los datos del jugador han sido modificados");
                             Espera();
