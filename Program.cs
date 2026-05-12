@@ -421,6 +421,7 @@ namespace TP01
                 {
                     Console.WriteLine("Este es el listado de jugadores que pueden ingresar al equipo: ");
                     ImprimirListado(jugadoresCandidatos);
+                    Console.WriteLine();
                     //elijo jugador a ingresar
                     opcNumJug = ElegirOpcion(jugadoresCandidatos, "jugador");
                     //si no elisio salir
@@ -428,10 +429,12 @@ namespace TP01
                     {
                         Console.WriteLine("Ha elegido a este jugador: ");
                         jugadoresCandidatos[opcNumJug].PrintSmall();
+                        //fuerza eleccion correcta
                         while(true)
                         {
                             Console.WriteLine("Desea agregarlo? (S/N)");
                             string opc = Console.ReadLine();
+                            //valida que elija s,S, n o N
                             if (ValidaBool(opc))
                             {
                                 //si eleigio s, S
@@ -477,6 +480,8 @@ namespace TP01
             
         }
 
+
+        //***************** MODIFICAR PARA AGREGAR CONFIRMACION DE LA OPERACION COMO EN AGREGAR***********
         static void QuitarJugadorDeEquipo(List<Equipo> equipos, List<Jugador> jugadores)
         {
             int opcNumEq;
@@ -509,39 +514,66 @@ namespace TP01
                     // si no eligio salir
                     if (opcNumJug != -1)
                     {
-                        // jugador elegido del listado
-                        Jugador jugElegido =jugadoresDelEquipo[opcNumJug];
-
-                        // buscar jugador real
-                        // en la lista general
-                        for (int j = 0; j < jugadores.Count; j++)
+                        Console.WriteLine("Ha elegido a este jugador: ");
+                        jugadoresDelEquipo[opcNumJug].PrintSmall();
+                        //fuerza eleccion correcta
+                        while(true)
                         {
-                            if (jugadores[j].dni == jugElegido.dni)
+                            Console.WriteLine("Desea quitarlo? (S/N)");
+                            string opc = Console.ReadLine();
+                            // si eligio s, S, n o N
+                            if (ValidaBool(opc))
                             {
-                                // copiar struct
-                                Jugador jugTemp = jugadores[j];
-
-                                // recorrer equipos asignados
-                                for (int i = jugTemp.equipAsig.Count - 1; i >= 0; i--)
+                                //si eleigio s, S
+                                if (ValidaSoN(opc))
                                 {
-                                    // si es el equipo elegido
-                                    if (jugTemp.equipAsig[i].nombreEquipo == equipos[opcNumEq].nombreEquipo)
-                                    {
-                                        // quitar equipo
-                                        jugTemp.equipAsig.RemoveAt(i);
+                                    // jugador elegido del listado
+                                    Jugador jugElegido = jugadoresDelEquipo[opcNumJug];
 
-                                        break;
+                                    // buscar jugador real
+                                    // en la lista general
+                                    for (int j = 0; j < jugadores.Count; j++)
+                                    {
+                                        if (jugadores[j].dni == jugElegido.dni)
+                                        {
+                                            // copiar struct
+                                            Jugador jugTemp = jugadores[j];
+
+                                            // recorrer equipos asignados
+                                            for (int i = jugTemp.equipAsig.Count - 1; i >= 0; i--)
+                                            {
+                                                // si es el equipo elegido
+                                                if (jugTemp.equipAsig[i].nombreEquipo == equipos[opcNumEq].nombreEquipo)
+                                                {
+                                                    // quitar equipo
+                                                    jugTemp.equipAsig.RemoveAt(i);
+                                                    //para salir del for
+                                                    break;
+                                                }
+                                            }
+
+                                            // actualizar jugador
+                                            jugadores[j] = jugTemp;
+
+                                            Console.WriteLine("Jugador quitado del equipo");
+                                            Espera();                          
+                                        }
                                     }
                                 }
-
-                                // actualizar jugador
-                                jugadores[j] = jugTemp;
-
-                                Console.WriteLine("Jugador quitado del equipo");
-                                Espera();
-                                //break;
+                                else //eligio n, N
+                                {
+                                    Console.WriteLine("Ud, ha anulado la baja del jugador del equipo");
+                                    Espera();
+                                }
+                                //para salir del while
+                                break;
+                            }
+                            else //no eleigio ni s, S, n o N
+                            {
+                                Console.WriteLine("Ingreso no valido");
                             }
                         }
+                        
                     }
                 }
                 else // equipo sin jugadores
