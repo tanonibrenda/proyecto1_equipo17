@@ -76,6 +76,19 @@ namespace TP01
                 return cant;
             }
 
+            public List<Jugador> ListadoDeJugadores(List<Jugador>jugadores)
+            {
+                List<Jugador> jugadoresEnEqupipo = new List<Jugador>();
+                foreach(Jugador jug in jugadores)
+                {
+                    if(jug.EstaEnEquipo(this))
+                    {
+                        jugadoresEnEqupipo.Add(jug);
+                    }
+                }
+                return jugadoresEnEqupipo;
+            }
+
             // se utiliza por combatilibad entre genericos de Jugador y Equipo
             public void PrintSmall()
             {
@@ -203,7 +216,9 @@ namespace TP01
         {
             AltaEquipo,                 //alta de equipo 
             BajaEquipo,                 //baja de equipo
-            ModificarDatosEquipo,            //Modif de equipo
+            ModificarDatosEquipo,       //Modif de equipo
+            AgregarJugadorAEquipo,      //agrega un jugador disponible al equipo
+            QuitarJugadorDeEquipo,      //quita un jugador del equipo
             AltaJugador,                //alta jugador
             BajaJugador,                //baja jugador
             ModificarDatosJugador,      //modif jugador
@@ -380,7 +395,87 @@ namespace TP01
 
         }
 
+        static void AgregarJugadorAEquipo(List<Equipo> equipos, List<Jugador> jugadores)
+        {
 
+        }
+
+        static void QuitarJugadorDeEquipo(List<Equipo> equipos, List<Jugador> jugadores)
+        {
+            int opcNumEq;
+            int opcNumJug;
+            List<Jugador> jugadoresDelEquipo =
+                new List<Jugador>();
+            Console.WriteLine("QUITAR JUGADOR");
+            Console.WriteLine("Este es el listado de Equipos: ");
+            Console.WriteLine();
+            // imprime listado de equipos
+            ImprimirListado(equipos);
+            // elegir equipo
+            opcNumEq = ElegirOpcion(equipos, "equipo");
+            // si no eligio salir
+            if (opcNumEq != -1)
+            {
+                Console.WriteLine("Ha elegido a este equipo");
+                equipos[opcNumEq].PrintFull(jugadores);
+                Console.WriteLine();
+
+                // obtengo jugadores del equipo
+                jugadoresDelEquipo = equipos[opcNumEq].ListadoDeJugadores(jugadores);
+                // si tiene jugadores
+                if (jugadoresDelEquipo.Count > 0)
+                {
+                    Console.WriteLine("El equipo tiene estos jugadores");
+                    ImprimirListado(jugadoresDelEquipo);
+                    Console.WriteLine();
+                    // elegir jugador
+                    opcNumJug =  ElegirOpcion(jugadoresDelEquipo, "jugador");
+                    // si no eligio salir
+                    if (opcNumJug != -1)
+                    {
+                        // jugador elegido del listado
+                        Jugador jugElegido =jugadoresDelEquipo[opcNumJug];
+
+                        // buscar jugador real
+                        // en la lista general
+                        for (int j = 0; j < jugadores.Count; j++)
+                        {
+                            if (jugadores[j].dni == jugElegido.dni)
+                            {
+                                // copiar struct
+                                Jugador jugTemp = jugadores[j];
+
+                                // recorrer equipos asignados
+                                for (int i = jugTemp.equipAsig.Count - 1; i >= 0; i--)
+                                {
+                                    // si es el equipo elegido
+                                    if (jugTemp.equipAsig[i].nombreEquipo == equipos[opcNumEq].nombreEquipo)
+                                    {
+                                        // quitar equipo
+                                        jugTemp.equipAsig.RemoveAt(i);
+
+                                        break;
+                                    }
+                                }
+
+                                // actualizar jugador
+                                jugadores[j] = jugTemp;
+
+                                Console.WriteLine("Jugador quitado del equipo");
+                                break;
+                            }
+                        }
+                    }
+                }
+                else // equipo sin jugadores
+                {
+                    Console.WriteLine(
+                        "El equipo no tiene jugadores para quitar");
+                }
+                Espera();
+                LimpiarPantalla();
+            }
+        }
         //ABM DE JUGADORES 
         /// <summary>
         /// Alta Jugador crea una nueva copia de struct Jugador
@@ -1467,8 +1562,8 @@ namespace TP01
             modificarEquipos = new OpcionMenu[]
 {
                 new OpcionMenu{ nombreOpcion = "Modificar datos del Equipo", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.ModificarDatosEquipo },
-                new OpcionMenu{ nombreOpcion = "Agregar jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.AgregarEquipoAJugador},
-                new OpcionMenu{ nombreOpcion = "Quitar jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.QuitarEquipoDeJugador },
+                new OpcionMenu{ nombreOpcion = "Agregar jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.AgregarJugadorAEquipo},
+                new OpcionMenu{ nombreOpcion = "Quitar jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.QuitarJugadorDeEquipo },
                 new OpcionMenu{ nombreOpcion = "Volver atras", tipoOpcion = TipoOpcion.Menu }
 };
 
@@ -1551,6 +1646,14 @@ namespace TP01
 
                 case AccionMenu.ModificarDatosEquipo:
                     ModificarDatosEquipo();
+                    break;
+
+                case AccionMenu.AgregarJugadorAEquipo:
+                    AgregarJugadorAEquipo(equipos, jugadores);
+                    break;
+
+                case AccionMenu.QuitarJugadorDeEquipo:
+                    QuitarJugadorDeEquipo(equipos, jugadores);
                     break;
 
                 case AccionMenu.AltaJugador:
