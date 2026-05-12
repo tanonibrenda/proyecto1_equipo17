@@ -397,15 +397,91 @@ namespace TP01
 
         static void AgregarJugadorAEquipo(List<Equipo> equipos, List<Jugador> jugadores)
         {
+            int opcNumEq;
+            int opcNumJug;
+            List<Jugador> jugadoresCandidatos = new List<Jugador>();
+            Console.WriteLine("AGREGAR JUGADOR");
+            Console.WriteLine("Este es el listado de Equipos: ");
+            Console.WriteLine();
+            // imprime listado de equipos
+            ImprimirListado(equipos);
+            // elegir equipo
+            opcNumEq = ElegirOpcion(equipos, "equipo");
+            // si no eligio salir
+            if (opcNumEq != -1)
+            {
+                Console.WriteLine("Ha elegido a este equipo");
+                equipos[opcNumEq].PrintFull(jugadores);
+                Console.WriteLine();
 
+                // obtengo jugadores que pueden entrar en el equipo
+                jugadoresCandidatos = ElegirJugadoresCandidatos(equipos[opcNumEq], jugadores);
+                // si tiene jugadores canidatos
+                if (jugadoresCandidatos.Count > 0)
+                {
+                    Console.WriteLine("Este es el listado de jugadores que pueden ingresar al equipo: ");
+                    ImprimirListado(jugadoresCandidatos);
+                    //elijo jugador a ingresar
+                    opcNumJug = ElegirOpcion(jugadoresCandidatos, "jugador");
+                    //si no elisio salir
+                    if(opcNumJug != -1)
+                    {
+                        Console.WriteLine("Ha elegido a este jugador: ");
+                        jugadoresCandidatos[opcNumJug].PrintSmall();
+                        while(true)
+                        {
+                            Console.WriteLine("Desea agregarlo? (S/N)");
+                            string opc = Console.ReadLine();
+                            if (ValidaBool(opc))
+                            {
+                                //si eleigio s, S
+                                if (ValidaSoN(opc))
+                                {
+                                    for(int i = 0; i < jugadores.Count; i++)
+                                    {
+                                        if (jugadoresCandidatos[opcNumJug].dni == jugadores[i].dni)
+                                        {
+                                            Jugador jugadorTemp = jugadores[i];
+                                            jugadorTemp.equipAsig.Add(equipos[opcNumEq]);
+                                            // piso al jugador en la list de jugadores
+                                            jugadores[i] = jugadorTemp;
+                                        }
+                                    }
+                                    Console.WriteLine("Jugador agregado al equipo");
+                                    Espera();
+                         
+                                }
+                                else // eliigio n, N
+                                {
+                                    Console.WriteLine("Ud, ha anulado el ingreso del jugador al equipo");
+                                    Espera();
+                                }
+                                break; 
+                            }
+                            else // no ingreso s, S, n, N
+                            {
+                                Console.WriteLine("Ingreso no valido");
+                            }
+          
+                        }
+                    }
+
+                }
+                else //no hay jugadores que pueden ingresar
+                {
+                    Console.WriteLine("Actualmente no hay ningun jugador que puede ingresar al equipo");
+                }
+                //Espera();
+                LimpiarPantalla();
+            }
+            
         }
 
         static void QuitarJugadorDeEquipo(List<Equipo> equipos, List<Jugador> jugadores)
         {
             int opcNumEq;
             int opcNumJug;
-            List<Jugador> jugadoresDelEquipo =
-                new List<Jugador>();
+            List<Jugador> jugadoresDelEquipo = new List<Jugador>();
             Console.WriteLine("QUITAR JUGADOR");
             Console.WriteLine("Este es el listado de Equipos: ");
             Console.WriteLine();
@@ -462,17 +538,18 @@ namespace TP01
                                 jugadores[j] = jugTemp;
 
                                 Console.WriteLine("Jugador quitado del equipo");
-                                break;
+                                Espera();
+                                //break;
                             }
                         }
                     }
                 }
                 else // equipo sin jugadores
                 {
-                    Console.WriteLine(
-                        "El equipo no tiene jugadores para quitar");
+                    Console.WriteLine("El equipo no tiene jugadores para quitar");
+                    Espera();
                 }
-                Espera();
+                
                 LimpiarPantalla();
             }
         }
@@ -1981,7 +2058,44 @@ namespace TP01
             }
 
             return equiposDisp;
-        }   
+        }  
+        /// <summary>
+        /// Funcion para elegir que jugadores pueden ingresar a un equipo
+        /// </summary>
+        /// <param name="equipo"></param>
+        /// <param name="jugadores"></param>
+        /// <returns>devuelve un list con los jugadores que pueden ingresar</returns>
+        static List<Jugador> ElegirJugadoresCandidatos(Equipo equipo, List<Jugador> jugadores)
+        {
+            //creo una lista de jugadores que podrian ingresar al equipo
+            List<Jugador> jugadoresCandidatos = new List<Jugador>();
+
+            foreach (Jugador jug in jugadores)
+            {
+                // si ya pertenece al equipo, lo salto
+                if (jug.EstaEnEquipo(equipo))
+                {
+                    continue;
+                }
+
+                // verifico edad maxima de categoria
+                if (jug.edad > ObtenerEdadMaxCategoria(equipo.categoria))
+                {
+                    continue;
+                }
+
+                // si juega en otro club, lo salto
+                if (jug.equipAsig.Count > 0 && jug.equipAsig[0].nombreClub != equipo.nombreClub)
+                {
+                    continue;
+                }
+
+                jugadoresCandidatos.Add(jug);
+            }
+
+            return jugadoresCandidatos;
+        }
+        
 
 
         //**************************************************************************************************
