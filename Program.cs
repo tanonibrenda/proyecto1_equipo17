@@ -259,46 +259,78 @@ namespace TP01
 
 
         // ABM DE EQUIPOS
-        static void AltaEquipo(List<Equipo> equipos, List<Jugador> jugadores)
+        static void AltaEquipo(List<Equipo> equipos)
         {
             //inicializo variables, para guardar los parametros antes de crear el equioo
-            string nombreClub;
-            string nombreEquipo;
-            string respCategoria;
-            int categoriaIndex;
-            List<Jugador> jugadoresDelClub = new List<Jugador>();
-            int cantMinima = 9;
+            //string nombreClub;
+            //string nombreEquipo;
+            //string respCategoria;
+            //int categoriaIndex;
+            //int cantMinima = 9;
+            Equipo equipoTemp = new Equipo();
+
+            int opcNumCat;
+            string opc;
 
             //solicito el nombre del club 
             Console.WriteLine("Ingrese el nombre del Club");
-            nombreClub = Console.ReadLine();
+            equipoTemp.nombreClub = Console.ReadLine().Trim().ToUpper();
 
             //cuento cuantos equipos ya tiene ese club
-            int cantEquiposDelClub = ContarEquiposPorClub(equipos, nombreClub);
+            int cantEquiposDelClub = ContarEquiposPorClub(equipos, equipoTemp.nombreClub);
 
-            // creo el nombre del equipo, con el formato "Club" + {nombre del club} + Letras
-            nombreEquipo = "Club " + nombreClub + " " + ObtenerEtiqueta(cantEquiposDelClub + 1);
+            // creo el nombre del equipo, con el formato "Club" + {nombre del club} + Letras  *** cambiar esto
+            equipoTemp.nombreEquipo = "Club " + equipoTemp.nombreClub + " " + ObtenerEtiqueta(cantEquiposDelClub + 1);
 
-            //genero un loop para obtener la categoria adecuada
-            while(true)
+            Console.WriteLine("Ingrese la categoria");
+            ImprimirListado(categoria);
+            opcNumCat = ElegirOpcion(categoria.ToList<String>(), "categoria");
+            //si no eligio salir de eleccion categoria
+            if(opcNumCat != -1)
             {
-                Console.WriteLine("Ingrese la categoria");
-                ImprimirListado(categoria);
-
-                respCategoria = Console.ReadLine();
-
-                if (ValidarOpcionElegida(categoria, respCategoria))
+                //asigno la categoria
+                equipoTemp.categoria = categoria[opcNumCat];
+                if(equipoTemp.categoria == "Veteranos")
                 {
-                    categoriaIndex = int.Parse(respCategoria) - 1;   // le resto 1 para acomodarlo al indice del array
-                    break;
+                    equipoTemp.cantMinima = 10;
+                }
+                else
+                {
+                    equipoTemp.cantMinima = 9;
+                }
+
+                Console.WriteLine("Estos son los datos del equipo que ha ingresado");
+                equipoTemp.PrintSmall();
+                //loo para forzar eleccion valida
+                while(true)
+                {
+                    Console.WriteLine("Desea guardarlo? (S/N)");
+                    opc = Console.ReadLine();
+                    //valida que elija s, S, n, N
+                    if (ValidaBool(opc))
+                    {
+                        //presiono s o S
+                        if (ValidaSoN(opc))
+                        {
+                            equipos.Add(equipoTemp);
+                            Console.WriteLine("Se ha agregado el equipo a la liga");
+                        }
+                        else  // presiono n o N
+                        {
+                            Console.WriteLine("Se ha cancelado el alta del equipo");
+                        }
+                        // sale del while
+                        break;
+                    }
+                    Console.WriteLine("Ingreso no valido!!!");
                 }
             }
-
-            /// FALTA IMPLEMENTAR EL ALTA.. VER SI NO CONVIENE EMPEZAR X LOS LISTADOS Y X JUGADORES
-
-
-
-
+            else // eligio salir de eleccion categoria
+            {
+                Console.WriteLine("Ud ha cancelado el alta de nuevo equipo");
+            }
+            Espera();
+            LimpiarPantalla();
         }
 
         static void BajaEquipo(List<Equipo> equipos, List<Jugador> jugadores)
@@ -1942,7 +1974,7 @@ namespace TP01
             switch (accion)
             {
                 case AccionMenu.AltaEquipo:
-                    AltaEquipo(equipos, jugadores);
+                    AltaEquipo(equipos);
                     break;
 
                 case AccionMenu.BajaEquipo:
@@ -2247,7 +2279,7 @@ namespace TP01
                 //verifica si quiere salir de la baja
                 if (opc == "s" || opc == "S")
                 {
-                    LimpiarPantalla();
+                    LimpiarPantalla();   // ve si lo saco
                     return opcNum;   // devuelve -1 que es salir de pantalla 
                 }
                 if (ValidarOpcionElegida(listado, opc))
@@ -2373,7 +2405,7 @@ namespace TP01
             //cargo datos para testeo .. BORRAR 
             //DatosTest.CargaTestCorta(jugadores, equipos);
             //DatosTest.CargaTest(jugadores, equipos);
-            DatosTest.CargaDatosMinima(equipos);
+            //DatosTest.CargaDatosMinima(equipos);
 
             //pongo al menu activo apuntando al menu principal
             OpcionMenu[] currentMenu = menuPrincipal;
