@@ -274,13 +274,13 @@ namespace TP01
 
             //solicito el nombre del club 
             Console.WriteLine("Ingrese el nombre del Club");
-            equipoTemp.nombreClub = Console.ReadLine().Trim().ToUpper();
+            equipoTemp.nombreClub = Capitalize(Console.ReadLine());
 
             //cuento cuantos equipos ya tiene ese club
             int cantEquiposDelClub = ContarEquiposPorClub(equipos, equipoTemp.nombreClub);
 
             // creo el nombre del equipo, con el formato "Club" + {nombre del club} + Letras  *** cambiar esto
-            equipoTemp.nombreEquipo = "Club " + equipoTemp.nombreClub + " " + ObtenerEtiqueta(cantEquiposDelClub + 1);
+            equipoTemp.nombreEquipo = "Club " + equipoTemp.nombreClub + " " + ObtenerEtiqueta(equipos, equipoTemp.nombreClub);
 
             Console.WriteLine("Ingrese la categoria");
             ImprimirListado(categoria);
@@ -339,90 +339,102 @@ namespace TP01
             string opc;
             List<Jugador> jugadoresAQuitar = new List<Jugador>();
             Console.WriteLine("BAJA DE EQUIPOS");
-            Console.WriteLine("Este es el listado de Equipos: ");
-            Console.WriteLine();
-            //imprime el listado de equipos para seleccionar uno
-            ImprimirListado(equipos);
-            //verif la opcion elegida ajustada al index del list
-            opcNumEq = ElegirOpcion(equipos, "equipo");
-            //// si no eligio salir del menu
-            if (opcNumEq != -1)
+
+            //si existen equpos cargado
+            if(equipos.Count > 0)
             {
-                Console.WriteLine("Ha elegido a este equipo");
-                equipos[opcNumEq].PrintFull(jugadores);
+                Console.WriteLine("Este es el listado de Equipos: ");
                 Console.WriteLine();
-                //recorro todos los jugadores de la liga
-                foreach (Jugador jug in jugadores)
+                //imprime el listado de equipos para seleccionar uno
+                ImprimirListado(equipos);
+                //verif la opcion elegida ajustada al index del list
+                opcNumEq = ElegirOpcion(equipos, "equipo");
+                //// si no eligio salir del menu
+                if (opcNumEq != -1)
                 {
-                    //verifico si este jugador juega en este equipo
-                    if (jug.EstaEnEquipo(equipos[opcNumEq]))
+                    Console.WriteLine("Ha elegido a este equipo");
+                    equipos[opcNumEq].PrintFull(jugadores);
+                    Console.WriteLine();
+                    //recorro todos los jugadores de la liga
+                    foreach (Jugador jug in jugadores)
                     {
-                        //lo agrego al listado de quitar
-                        jugadoresAQuitar.Add(jug);
-                    }
-                }
-                //si el equipo tiene jugadores asignados 
-                if (jugadoresAQuitar.Count > 0)
-                {
-                    Console.WriteLine("Si borra el equipo, el mismo se removera de los siguientes jugadores: ");
-                    foreach (Jugador jug in jugadoresAQuitar)
-                    {
-                        jug.PrintSmall();
-                    }
-                }
-                //loop para forzar la eleccion valida
-                while (true)
-                {
-                    Console.WriteLine("Desea borrarlo? (S/N)");
-                    opc = Console.ReadLine();
-                    //valida que elija s, S, n, N
-                    if (ValidaBool(opc))
-                    {
-                        //presiono s o S
-                        if (ValidaSoN(opc))
+                        //verifico si este jugador juega en este equipo
+                        if (jug.EstaEnEquipo(equipos[opcNumEq]))
                         {
-                            //si tiene jugadores a quitar
-                            if(jugadoresAQuitar.Count > 0)
+                            //lo agrego al listado de quitar
+                            jugadoresAQuitar.Add(jug);
+                        }
+                    }
+                    //si el equipo tiene jugadores asignados 
+                    if (jugadoresAQuitar.Count > 0)
+                    {
+                        Console.WriteLine("Si borra el equipo, el mismo se removera de los siguientes jugadores: ");
+                        foreach (Jugador jug in jugadoresAQuitar)
+                        {
+                            jug.PrintSmall();
+                        }
+                    }
+                    //loop para forzar la eleccion valida
+                    while (true)
+                    {
+                        Console.WriteLine("Desea borrarlo? (S/N)");
+                        opc = Console.ReadLine();
+                        //valida que elija s, S, n, N
+                        if (ValidaBool(opc))
+                        {
+                            //presiono s o S
+                            if (ValidaSoN(opc))
                             {
-                                //recorro todo el listado de jugadores de la liga
-                                for(int i = 0; i < jugadores.Count; i++)
+                                //si tiene jugadores a quitar
+                                if (jugadoresAQuitar.Count > 0)
                                 {
-                                    //copio el jugador a uno temporal 
-                                    Jugador jug = jugadores[i];
-
-                                    //si el jugador esta en el equipo a borrar 
-                                    if (jug.EstaEnEquipo(equipos[opcNumEq]))
+                                    //recorro todo el listado de jugadores de la liga
+                                    for (int i = 0; i < jugadores.Count; i++)
                                     {
-                                        //recorro los equipos asignados del jugador
-                                        for (int j = jug.equipAsig.Count - 1; j >= 0; j--)
-                                        {
-                                            //si es el equipo a borrar
-                                            if (jug.equipAsig[j].nombreEquipo == equipos[opcNumEq].nombreEquipo)
-                                            {
-                                                //lo quito del listado de equipos del jugador
-                                                jug.equipAsig.RemoveAt(j);
-                                            }
-                                        }
-                                        //piso al jugador del listado con el temporal para actualizarlo
-                                        jugadores[i] = jug;
-                                    }                   
-                                }
-                            }
+                                        //copio el jugador a uno temporal 
+                                        Jugador jug = jugadores[i];
 
-                          //borro al equipo
-                          equipos.RemoveAt(opcNumEq);
+                                        //si el jugador esta en el equipo a borrar 
+                                        if (jug.EstaEnEquipo(equipos[opcNumEq]))
+                                        {
+                                            //recorro los equipos asignados del jugador
+                                            for (int j = jug.equipAsig.Count - 1; j >= 0; j--)
+                                            {
+                                                //si es el equipo a borrar
+                                                if (jug.equipAsig[j].nombreEquipo == equipos[opcNumEq].nombreEquipo)
+                                                {
+                                                    //lo quito del listado de equipos del jugador
+                                                    jug.equipAsig.RemoveAt(j);
+                                                }
+                                            }
+                                            //piso al jugador del listado con el temporal para actualizarlo
+                                            jugadores[i] = jug;
+                                        }
+                                    }
+                                }
+
+                                //borro al equipo
+                                equipos.RemoveAt(opcNumEq);
+                            }
+                            else  // presiono n o N
+                            {
+                                Console.WriteLine("Se ha anulado la baja del equipo");
+                            }
+                            break;
                         }
-                        else  // presiono n o N
-                        {
-                            Console.WriteLine("Se ha anulado la baja del equipo");
-                        }
-                        break;
+                        Console.WriteLine("Ingreso no valido!!!");
                     }
-                    Console.WriteLine("Ingreso no valido!!!");
+                    Espera();
+                    LimpiarPantalla();
                 }
+            }
+            else // no existen equipos cargados en la liga
+            {
+                Console.WriteLine("Actualmente no hay ningun equipo en la liga");
                 Espera();
                 LimpiarPantalla();
             }
+
         }
 
         static void ModificarDatosEquipo(List<Equipo> equipos, List<Jugador> jugadores)
@@ -1737,6 +1749,20 @@ namespace TP01
         }
 
         /// <summary>
+        /// Recibe un stirng con cualquier orden de mayusc y minusculas
+        /// </summary>
+        /// <param name="texto"></param>
+        /// <returns>devuelve un texto sin espacios atras o adelante y la primer letra en mayusculas</returns>
+        static string Capitalize(string texto)
+        {
+            string textoTemp;
+            //quito los espacios al final y al principio
+            textoTemp = texto.Trim();
+            textoTemp = textoTemp.Substring(0, 1).ToUpper() + textoTemp.Substring(1).ToLower();
+            return textoTemp;
+        }
+
+        /// <summary>
         /// Imprime un listado extraeido de un array de elementos OpcionMenu
         /// </summary>
         /// <param name="menu"></param> recibe un array de elementos OpcionMenu
@@ -2062,27 +2088,38 @@ namespace TP01
         }
 
         /// <summary>
-        /// Obtiene letra para ir incrementando alfabeticamente los nombres de los equipos del mismo club
+        /// Calcula la letra del ult equipo del clbu y devuelve la letra siguiente
         /// </summary>
-        /// <param name="numero"></param> recibe el numero de equipos del club + 1
-        /// <returns>  devuelve un string A... Z, ... AA, AB... AZ</returns
-        /// 
-        static string ObtenerEtiqueta(int numero)  // REVISAR ESTA FUNCION
+        /// <param name="equipos"></param>
+        /// <param name="nombreClub"></param>
+        /// <returns>retorna la letra que corresp</returns>
+        static string ObtenerEtiqueta(List<Equipo> equipos, string nombreClub)
         {
-            //INICIALIZA EL NUMERO 
-            string resultado = "";
+            int mayorIndice = 0;
 
-            while (numero > 0)
+            foreach (Equipo eq in equipos)
             {
-                int resto = numero % 26;
-                char letra = (char)('A' + resto);
+                if (eq.nombreClub == nombreClub)
+                {
+                    // obtiene última letra del nombre del equipo
+                    char letra = eq.nombreEquipo[eq.nombreEquipo.Length - 1];
 
-                resultado = letra + resultado;
-                numero /= 26;
+                    // convierte A=1, B=2, etc
+                    int indice = letra - 'A' + 1;
+
+                    if (indice > mayorIndice)
+                    {
+                        mayorIndice = indice;
+                    }
+                }
             }
 
-            return resultado;
+            // siguiente letra
+            char nuevaEtiqueta = (char)('A' + mayorIndice);
+
+            return nuevaEtiqueta.ToString();
         }
+
         /// <summary>
         /// obtiene el indice del enum categoria
         /// </summary>
