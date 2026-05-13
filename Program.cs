@@ -277,7 +277,7 @@ namespace TP01
             equipoTemp.nombreClub = Capitalize(Console.ReadLine());
 
             //cuento cuantos equipos ya tiene ese club
-            int cantEquiposDelClub = ContarEquiposPorClub(equipos, equipoTemp.nombreClub);
+            //int cantEquiposDelClub = ContarEquiposPorClub(equipos, equipoTemp.nombreClub);
 
             // creo el nombre del equipo, con el formato "Club" + {nombre del club} + Letras  *** cambiar esto
             equipoTemp.nombreEquipo = "Club " + equipoTemp.nombreClub + " " + ObtenerEtiqueta(equipos, equipoTemp.nombreClub);
@@ -1755,11 +1755,31 @@ namespace TP01
         /// <returns>devuelve un texto sin espacios atras o adelante y la primer letra en mayusculas</returns>
         static string Capitalize(string texto)
         {
-            string textoTemp;
-            //quito los espacios al final y al principio
-            textoTemp = texto.Trim();
-            textoTemp = textoTemp.Substring(0, 1).ToUpper() + textoTemp.Substring(1).ToLower();
-            return textoTemp;
+            string[] palabras;
+            string resultado = "";
+
+            // quita espacios adelante y atrás
+            texto = texto.Trim();
+
+            // separa palabras
+            palabras = texto.Split(' ');
+
+            foreach (string palabra in palabras)
+            {
+                // evita problemas si hay dobles espacios
+                if (palabra != "")
+                {
+                    resultado +=
+                        palabra.Substring(0, 1).ToUpper() +
+                        palabra.Substring(1).ToLower() +
+                        " ";
+                }
+            }
+
+            // quita el último espacio agregado
+            resultado = resultado.TrimEnd();
+
+            return resultado;
         }
 
         /// <summary>
@@ -1991,7 +2011,7 @@ namespace TP01
             modificarJugadores[3].newMenu = administrarJugadores;
 
             listados[3].newMenu = menuPrincipal;
-            reportes[3].newMenu = menuPrincipal;
+            reportes[4].newMenu = menuPrincipal;
         }
 
         //funcion que analiza cual es la accion y la ejecuta
@@ -2095,17 +2115,16 @@ namespace TP01
         /// <returns>retorna la letra que corresp</returns>
         static string ObtenerEtiqueta(List<Equipo> equipos, string nombreClub)
         {
-            int mayorIndice = 0;
+            int mayorIndice = -1;
 
             foreach (Equipo eq in equipos)
             {
                 if (eq.nombreClub == nombreClub)
                 {
-                    // obtiene última letra del nombre del equipo
-                    char letra = eq.nombreEquipo[eq.nombreEquipo.Length - 1];
+                    string etiqueta =
+                        eq.nombreEquipo.Substring(eq.nombreEquipo.LastIndexOf(' ') + 1);
 
-                    // convierte A=1, B=2, etc
-                    int indice = letra - 'A' + 1;
+                    int indice = ConvertirEtiquetaANumero(etiqueta);
 
                     if (indice > mayorIndice)
                     {
@@ -2114,10 +2133,33 @@ namespace TP01
                 }
             }
 
-            // siguiente letra
-            char nuevaEtiqueta = (char)('A' + mayorIndice);
+            return ObtenerEtiqueta(mayorIndice + 1);
+        }
 
-            return nuevaEtiqueta.ToString();
+        static string ObtenerEtiqueta(int numero)
+        {
+            string resultado = "";
+
+            while (numero >= 0)
+            {
+                resultado = (char)('A' + (numero % 26)) + resultado;
+                numero = (numero / 26) - 1;
+            }
+
+            return resultado;
+        }
+
+        static int ConvertirEtiquetaANumero(string etiqueta)
+        {
+            int resultado = 0;
+
+            foreach (char c in etiqueta)
+            {
+                resultado *= 26;
+                resultado += (c - 'A' + 1);
+            }
+
+            return resultado - 1;
         }
 
         /// <summary>
