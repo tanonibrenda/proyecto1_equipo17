@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static TP01.Program;
 
 namespace TP01
 {
@@ -31,6 +32,47 @@ namespace TP01
             "Independiente"
         };
 
+        public static void CargaDatosMinima(List<Equipo> equipos)
+        {
+            string[] clubes =
+            {
+        "River Plate",
+        "Boca Juniors",
+        "San Lorenzo",
+        "Racing Club",
+        "Independiente"
+    };
+
+            string[] categorias =
+            {
+        "Infantil",
+        "Juvenil",
+        "Veteranos"
+    };
+
+            foreach (string club in clubes)
+            {
+                foreach (string categoria in categorias)
+                {
+                    Equipo nuevoEquipo = new Equipo();
+
+                    nuevoEquipo.nombreClub = club;
+                    nuevoEquipo.categoria = categoria;
+                    nuevoEquipo.nombreEquipo = club + " " + categoria;
+
+                    if (categoria == "Veteranos")
+                    {
+                        nuevoEquipo.cantMinima = 10;
+                    }
+                    else
+                    {
+                        nuevoEquipo.cantMinima = 9;
+                    }
+
+                    equipos.Add(nuevoEquipo);
+                }
+            }
+        }
         public static void CargaTest(
             List<Program.Jugador> jugadores,
             List<Program.Equipo> equipos)
@@ -401,6 +443,9 @@ namespace TP01
                 equipos[15],
                 1);
         }
+
+
+
 
         // =====================================================
         // VALIDAR EDAD SEGUN CATEGORIA

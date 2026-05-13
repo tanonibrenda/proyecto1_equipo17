@@ -231,6 +231,7 @@ namespace TP01
             MasJovenMasViejo,           //Reporte de jugador mas joven y mas viejo
             CantidadXCategoria,         //Cantidad de jugadores x categoria
             PromedioEdad,               //promedio de edad de la liga
+            EquiposqueNecesitanJugadores, //Equipos que tienen menos jugadores que la cantMinima
             Exit                        //salir del programa
         }
 
@@ -1648,6 +1649,38 @@ namespace TP01
             LimpiarPantalla();
         }
 
+        static void EquiposqueNecesitanJugadores(List<Equipo> equipos, List<Jugador> jugadores)
+        {
+            List<Equipo> equiposQuePrecisan = new List<Equipo>();
+            if(equipos.Count > 0)
+            {
+                foreach(Equipo equipo in equipos)
+                {
+                    if(equipo.CantidadJugadoresEquipo(jugadores) < equipo.cantMinima)
+                    {
+                        equiposQuePrecisan.Add(equipo);
+                    }
+                }
+
+                //si hay equipos con falta
+                if(equiposQuePrecisan.Count > 0)
+                {
+                    Console.WriteLine("Estos equipos estan necesitando jugadores");
+                    ImprimirListado(equiposQuePrecisan);
+                }
+                else //ningun equipo precisa jugadores
+                {
+                    Console.WriteLine("Ningun equipo esta precisando jugadores");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Actualmente la liga no tiene equipos");
+            }
+            Espera();
+            LimpiarPantalla();
+        }
+
 
 
         //**************************************************************************************************
@@ -1867,6 +1900,7 @@ namespace TP01
                 new OpcionMenu{ nombreOpcion = "Obtener jugador mas joven y mas viejo", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.MasJovenMasViejo },
                 new OpcionMenu{ nombreOpcion = "Obtener cantidad de Jugadores por categoria", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.CantidadXCategoria },
                 new OpcionMenu{ nombreOpcion = "Obtener promedio de edad General", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.PromedioEdad},
+                new OpcionMenu{ nombreOpcion = "Equipos que necesitan jugadores", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.EquiposqueNecesitanJugadores},
                 new OpcionMenu{ nombreOpcion = "Volver atras", tipoOpcion = TipoOpcion.Menu }
             };
 
@@ -1967,8 +2001,12 @@ namespace TP01
                     CantidadXCategoria(jugadores);
                     break;
 
-                case AccionMenu.PromedioEdad:
+                case AccionMenu.PromedioEdad:   
                     PromedioEdad(jugadores);
+                    break;
+
+                case AccionMenu.EquiposqueNecesitanJugadores:
+                    EquiposqueNecesitanJugadores(equipos, jugadores);
                     break;
 
                 case AccionMenu.Exit:
@@ -2335,6 +2373,7 @@ namespace TP01
             //cargo datos para testeo .. BORRAR 
             //DatosTest.CargaTestCorta(jugadores, equipos);
             //DatosTest.CargaTest(jugadores, equipos);
+            DatosTest.CargaDatosMinima(equipos);
 
             //pongo al menu activo apuntando al menu principal
             OpcionMenu[] currentMenu = menuPrincipal;
