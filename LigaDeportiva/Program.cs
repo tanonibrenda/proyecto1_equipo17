@@ -1019,6 +1019,7 @@ namespace TP01
                 }
 
                 //edicion nombre
+                //edicion nombre
                 while (true)
                 {
                     Console.WriteLine("Desea modif el nombre (S/N)");
@@ -1029,10 +1030,23 @@ namespace TP01
                         //elije s, S
                         if (ValidaSoN(opc))
                         {
-                            Console.WriteLine("ingrese nuevo nombre");
-                            opc = Console.ReadLine();
-                            jugadorTemp.nombre = opc;
-                            break;
+                            // NUEVO BUCLE PARA VALIDAR EL INGRESO DEL NOMBRE
+                            while (true)
+                            {
+                                Console.WriteLine("ingrese nuevo nombre");
+                                opc = Console.ReadLine();
+
+                                if (VerificaSoloLetras(opc))
+                                {
+                                    jugadorTemp.nombre = Capitalize(opc); // Opcional: Usamos tu función Capitalize para que quede prolijo
+                                    break; // Sale del bucle de validación de nombre
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Error: El nombre solo puede contener letras y espacios. Intente nuevamente.");
+                                }
+                            }
+                            break; // Sale del bucle de preguntar si desea modificar
                         }
                         else //elije n, N
                         {
@@ -1053,10 +1067,23 @@ namespace TP01
                         //elije s, S
                         if (ValidaSoN(opc))
                         {
-                            Console.WriteLine("ingrese nuevo apellido");
-                            opc = Console.ReadLine();
-                            jugadorTemp.apellido = opc;
-                            break;
+                            // NUEVO BUCLE PARA VALIDAR EL INGRESO DEL APELLIDO
+                            while (true)
+                            {
+                                Console.WriteLine("ingrese nuevo apellido");
+                                opc = Console.ReadLine();
+
+                                if (VerificaSoloLetras(opc))
+                                {
+                                    jugadorTemp.apellido = Capitalize(opc); // Opcional: Usamos tu función Capitalize para que quede prolijo
+                                    break; // Sale del bucle de validación de apellido
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Error: El apellido solo puede contener letras y espacios. Intente nuevamente.");
+                                }
+                            }
+                            break; // Sale del bucle de preguntar si desea modificar
                         }
                         else //elije n, N
                         {
@@ -2304,11 +2331,38 @@ namespace TP01
             {
                 //si no es un digito retorna falso
                 if (!char.IsDigit(c))
+
                     return false;
             }
 
             return true;
         }
+
+        //BUG04
+        /// <summary>
+        /// Verifica que el string ingresado contenga únicamente letras y espacios.
+        /// </summary>
+        /// <param name="texto">El texto a evaluar</param>
+        /// <returns>True si solo tiene letras y espacios, False si contiene números, símbolos o está vacío</returns>
+        static bool VerificaSoloLetras(string texto)
+        {
+            // Verifica si el texto es nulo o está vacío
+            if (string.IsNullOrWhiteSpace(texto))
+                return false;
+
+            // Recorre cada carácter del texto
+            foreach (char c in texto)
+            {
+                // Si el carácter NO es una letra y NO es un espacio en blanco, es inválido
+                if (!char.IsLetter(c) && c != ' ')
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
 
         /// <summary>
         /// Verifica si ya fue cargado antes un DNI en el listado de jugadores de la liga
