@@ -7,6 +7,8 @@
 //ARAUJO, Facundo///
 //************************************************************************************************** 
 
+// Formato: Ctrl + K  luego Ctrl + D
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -809,6 +811,7 @@ namespace TP01
             List<Equipo> equipAsig = new List<Equipo>();
             Console.WriteLine("Alta de jugador:");
             Console.WriteLine();
+
             while (true)
             {
                 Console.WriteLine("Ingrese el DNI: ");
@@ -828,16 +831,16 @@ namespace TP01
                 }
                 else
                 {
-                    Console.WriteLine("El formato ingresado no es valido, por favor ingrese solo numeros sin puntos ni espacios");
+                    // MENSAJE ACTUALIZADO PARA 6 A 8 DIGITOS
+                    Console.WriteLine("El formato ingresado no es valido, por favor ingrese entre 6 y 8 numeros sin puntos ni espacios.");
                 }
                 Espera();
-
             }
+
             Console.WriteLine("Ingrese el nombre: ");
             nombre = Console.ReadLine();
             Console.WriteLine("Ingrese el apellido: ");
             apellido = Console.ReadLine();
-
 
             //loop para forzar edad valida
             while (true)
@@ -853,8 +856,8 @@ namespace TP01
                 {
                     Console.WriteLine("Ingreso invalido");
                 }
-
             }
+
             //loop para forzar seguro valido
             while (true)
             {
@@ -899,7 +902,6 @@ namespace TP01
             Console.WriteLine("nuevo jugador agregado!!!");
             Espera();
             LimpiarPantalla();
-
         }
 
         static void BajaJugador(List<Jugador> jugadores)
@@ -1001,9 +1003,10 @@ namespace TP01
                                     Console.WriteLine($"ya existe un jugador el dni {opc}");
                                 }
                             }
-                            else //dni ingresado no es valido
+                            else //dni ingresado no es valido  
                             {
-                                Console.WriteLine("El dni ingresado no tiene formato valido");
+                                // Mensaje modificado por BUG03
+                                Console.WriteLine("El dni ingresado no tiene formato valido. Debe tener entre 6 y 8 números.");
                             }
                         }
                         else //elije n, N
@@ -1999,12 +2002,12 @@ namespace TP01
             };
 
             modificarEquipos = new OpcionMenu[]
-{
+        {
                 new OpcionMenu{ nombreOpcion = "Modificar datos del Equipo", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.ModificarDatosEquipo },
                 new OpcionMenu{ nombreOpcion = "Agregar jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.AgregarJugadorAEquipo},
                 new OpcionMenu{ nombreOpcion = "Quitar jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.QuitarJugadorDeEquipo },
                 new OpcionMenu{ nombreOpcion = "Volver atras", tipoOpcion = TipoOpcion.Menu }
-};
+        };
 
             administrarJugadores = new OpcionMenu[]
             {
@@ -2290,6 +2293,10 @@ namespace TP01
         {
             //verica si es nulo
             if (string.IsNullOrEmpty(dni))
+                return false;
+
+            //verifica la longitud del dni, entre 6 y 8 digitos AGREGADO BUG03 
+            if (dni.Length < 6 || dni.Length > 8)
                 return false;
 
             //recorre cada caracter del string
