@@ -49,8 +49,8 @@ namespace TP01
             /// <returns></returns>
             public bool TieneJugador(Jugador jugador)
             {
-                
-                if (jugador.equipAsig != null) 
+
+                if (jugador.equipAsig != null)
                 {
 
                     foreach (Equipo equipo in jugador.equipAsig)
@@ -77,12 +77,12 @@ namespace TP01
                 return cant;
             }
 
-            public List<Jugador> ListadoDeJugadores(List<Jugador>jugadores)
+            public List<Jugador> ListadoDeJugadores(List<Jugador> jugadores)
             {
                 List<Jugador> jugadoresEnEqupipo = new List<Jugador>();
-                foreach(Jugador jug in jugadores)
+                foreach (Jugador jug in jugadores)
                 {
-                    if(jug.EstaEnEquipo(this))
+                    if (jug.EstaEnEquipo(this))
                     {
                         jugadoresEnEqupipo.Add(jug);
                     }
@@ -125,12 +125,12 @@ namespace TP01
             /// <returns>true si esta, false si no esta</returns>
             public bool EstaEnEquipo(Equipo equipo)
             {
-                if(equipAsig!= null)
+                if (equipAsig != null)
                 {
-                    foreach(Equipo equip in equipAsig)
+                    foreach (Equipo equip in equipAsig)
                     {
-                        if(equip.nombreEquipo == equipo.nombreEquipo)
-                            { return true; }
+                        if (equip.nombreEquipo == equipo.nombreEquipo)
+                        { return true; }
                     }
                 }
                 return false;
@@ -189,7 +189,7 @@ namespace TP01
                 Console.WriteLine(afiliado ? "Esta afiliado" : "No esta afiliado");
 
 
-                if(equipAsig != null && equipAsig.Count > 0)
+                if (equipAsig != null && equipAsig.Count > 0)
                 {
                     Console.WriteLine("juega en los siguientes equipos:");
                     ImprimirListado(equipAsig);
@@ -209,7 +209,7 @@ namespace TP01
         // define el tipo de opcion que puedo tener dentro de un menu
         enum TipoOpcion
         {
-            Accion, 
+            Accion,
             Menu
         }
 
@@ -286,11 +286,11 @@ namespace TP01
             ImprimirListado(categoria);
             opcNumCat = ElegirOpcion(categoria.ToList<String>(), "categoria");
             //si no eligio salir de eleccion categoria
-            if(opcNumCat != -1)
+            if (opcNumCat != -1)
             {
                 //asigno la categoria
                 equipoTemp.categoria = categoria[opcNumCat];
-                if(equipoTemp.categoria == "Veteranos")
+                if (equipoTemp.categoria == "Veteranos")
                 {
                     equipoTemp.cantMinima = 10;
                 }
@@ -302,7 +302,7 @@ namespace TP01
                 Console.WriteLine("Estos son los datos del equipo que ha ingresado");
                 equipoTemp.PrintSmall();
                 //loo para forzar eleccion valida
-                while(true)
+                while (true)
                 {
                     Console.WriteLine("Desea guardarlo? (S/N)");
                     opc = Console.ReadLine();
@@ -341,7 +341,7 @@ namespace TP01
             Console.WriteLine("BAJA DE EQUIPOS");
 
             //si existen equpos cargado
-            if(equipos.Count > 0)
+            if (equipos.Count > 0)
             {
                 Console.WriteLine("Este es el listado de Equipos: ");
                 Console.WriteLine();
@@ -457,7 +457,7 @@ namespace TP01
                 equipos[opcNumEq].PrintFull(jugadores);
                 Console.WriteLine();
                 //fuerza respuesta corrcta
-                while(true)
+                while (true)
                 {
                     Console.WriteLine("Desea Cambiar la Categoria? (S/N)");
                     string opc = Console.ReadLine();
@@ -488,9 +488,9 @@ namespace TP01
                                 {
 
 
-                                    foreach(Jugador jug in equipoTemp.ListadoDeJugadores(jugadores))
+                                    foreach (Jugador jug in equipoTemp.ListadoDeJugadores(jugadores))
                                     {
-                                        if(jug.edad >  edadMaxNueva)
+                                        if (jug.edad > edadMaxNueva)
                                         {
                                             jugadoresAQuitar.Add(jug);
                                         }
@@ -501,7 +501,7 @@ namespace TP01
                                     }
 
                                     //si hay que quitar jugadores
-                                    if(jugadoresAQuitar.Count > 0)
+                                    if (jugadoresAQuitar.Count > 0)
                                     {
                                         Console.WriteLine("El cambio de categoria forzaria a quitar a los siguentes jugadores:");
                                         ImprimirListado(jugadoresAQuitar);
@@ -509,7 +509,7 @@ namespace TP01
                                     }
 
                                     //si quedan jugadores
-                                    if(jugadoresQueQuedan.Count > 0)
+                                    if (jugadoresQueQuedan.Count > 0)
                                     {
                                         Console.WriteLine("Quedando solo los siguentes jugadores:");
                                         ImprimirListado(jugadoresQueQuedan);
@@ -523,7 +523,7 @@ namespace TP01
 
                                 }
                                 //fuerza la eleccion 
-                                while(true)
+                                while (true)
                                 {
                                     Console.WriteLine("Desea guardar los cambios? (S/N)");
                                     opc = Console.ReadLine();
@@ -534,16 +534,16 @@ namespace TP01
                                         if (ValidaSoN(opc))
                                         {
                                             //modifico el equipo asig en cada jugador a quitar
-                                            foreach(Jugador jug in jugadoresAQuitar)
+                                            foreach (Jugador jug in jugadoresAQuitar)
                                             {
                                                 jug.QuitarDeEquipo(equipoTemp);
                                                 //piso el estado de los jugadores a quitar en la lista de los jugadores de la liga
                                                 for (int i = 0; i < jugadores.Count; i++)
                                                 {
-                                                    if(jug.dni == jugadores[i].dni)
+                                                    if (jug.dni == jugadores[i].dni)
                                                     {
                                                         jugadores[i] = jug;
-                                                        break; 
+                                                        break;
                                                     }
                                                 }
                                             }
@@ -552,7 +552,7 @@ namespace TP01
                                             equipoTemp.categoria = categoriasDisp[opcNumCat];
 
                                             //actualizo la cantMinima de jugadores si la nueva categoria es veteranos
-                                            if(equipoTemp.categoria == "Veteranos")
+                                            if (equipoTemp.categoria == "Veteranos")
                                             {
                                                 equipoTemp.cantMinima = 10;
                                             }
@@ -561,12 +561,12 @@ namespace TP01
                                                 equipoTemp.cantMinima = 9;
                                             }
 
-                                                //piso al equipo con los datos modificados
-                                                equipos[opcNumEq] = equipoTemp;
+                                            //piso al equipo con los datos modificados
+                                            equipos[opcNumEq] = equipoTemp;
 
                                             Console.Write("Se han guardado los cambios \n");
                                             Espera();
-  
+
                                         }
                                         else // eligio n, N
                                         {
@@ -632,12 +632,12 @@ namespace TP01
                     //elijo jugador a ingresar
                     opcNumJug = ElegirOpcion(jugadoresCandidatos, "jugador");
                     //si no elisio salir
-                    if(opcNumJug != -1)
+                    if (opcNumJug != -1)
                     {
                         Console.WriteLine("Ha elegido a este jugador: ");
                         jugadoresCandidatos[opcNumJug].PrintSmall();
                         //fuerza eleccion correcta
-                        while(true)
+                        while (true)
                         {
                             Console.WriteLine("Desea agregarlo? (S/N)");
                             string opc = Console.ReadLine();
@@ -647,7 +647,7 @@ namespace TP01
                                 //si eleigio s, S
                                 if (ValidaSoN(opc))
                                 {
-                                    for(int i = 0; i < jugadores.Count; i++)
+                                    for (int i = 0; i < jugadores.Count; i++)
                                     {
                                         if (jugadoresCandidatos[opcNumJug].dni == jugadores[i].dni)
                                         {
@@ -659,7 +659,7 @@ namespace TP01
                                     }
                                     Console.WriteLine("Jugador agregado al equipo");
                                     Espera();
-                         
+
                                 }
                                 else // eliigio n, N
                                 {
@@ -667,13 +667,13 @@ namespace TP01
                                     Espera();
                                 }
                                 //sale del while de respuesta correcta
-                                break; 
+                                break;
                             }
                             else // no ingreso s, S, n, N
                             {
                                 Console.WriteLine("Ingreso no valido");
                             }
-          
+
                         }
                     }
 
@@ -684,7 +684,7 @@ namespace TP01
                 }
                 LimpiarPantalla();
             }
-            
+
         }
 
 
@@ -717,14 +717,14 @@ namespace TP01
                     ImprimirListado(jugadoresDelEquipo);
                     Console.WriteLine();
                     // elegir jugador
-                    opcNumJug =  ElegirOpcion(jugadoresDelEquipo, "jugador");
+                    opcNumJug = ElegirOpcion(jugadoresDelEquipo, "jugador");
                     // si no eligio salir
                     if (opcNumJug != -1)
                     {
                         Console.WriteLine("Ha elegido a este jugador: ");
                         jugadoresDelEquipo[opcNumJug].PrintSmall();
                         //fuerza eleccion correcta
-                        while(true)
+                        while (true)
                         {
                             Console.WriteLine("Desea quitarlo? (S/N)");
                             string opc = Console.ReadLine();
@@ -763,7 +763,7 @@ namespace TP01
                                             jugadores[j] = jugTemp;
 
                                             Console.WriteLine("Jugador quitado del equipo");
-                                            Espera();                          
+                                            Espera();
                                         }
                                     }
                                 }
@@ -780,7 +780,7 @@ namespace TP01
                                 Console.WriteLine("Ingreso no valido");
                             }
                         }
-                        
+
                     }
                 }
                 else // equipo sin jugadores
@@ -788,7 +788,7 @@ namespace TP01
                     Console.WriteLine("El equipo no tiene jugadores para quitar");
                     Espera();
                 }
-                
+
                 LimpiarPantalla();
             }
         }
@@ -806,10 +806,10 @@ namespace TP01
             int edad;
             bool seguro = false;
             bool afiliado = false;
-             List<Equipo> equipAsig = new List<Equipo>();
+            List<Equipo> equipAsig = new List<Equipo>();
             Console.WriteLine("Alta de jugador:");
             Console.WriteLine();
-            while(true)
+            while (true)
             {
                 Console.WriteLine("Ingrese el DNI: ");
                 dni = Console.ReadLine();
@@ -831,7 +831,7 @@ namespace TP01
                     Console.WriteLine("El formato ingresado no es valido, por favor ingrese solo numeros sin puntos ni espacios");
                 }
                 Espera();
-                
+
             }
             Console.WriteLine("Ingrese el nombre: ");
             nombre = Console.ReadLine();
@@ -840,7 +840,7 @@ namespace TP01
 
 
             //loop para forzar edad valida
-            while(true)
+            while (true)
             {
                 Console.WriteLine("Ingrese la edad (1 a 99 años): ");
                 string edadString = Console.ReadLine();
@@ -856,11 +856,11 @@ namespace TP01
 
             }
             //loop para forzar seguro valido
-            while(true)
+            while (true)
             {
                 Console.WriteLine("Está asegurado? (S/N)");
                 string segString = Console.ReadLine();
-                if(ValidaBool(segString))
+                if (ValidaBool(segString))
                 {
                     seguro = ValidaSoN(segString);
                     break;
@@ -869,7 +869,7 @@ namespace TP01
             }
 
             //loop para forzar afiliacion valida
-            while(true)
+            while (true)
             {
                 Console.WriteLine("Está afiliado? (S/N)");
                 string afilString = Console.ReadLine();
@@ -913,10 +913,10 @@ namespace TP01
             ImprimirListado(jugadores);
 
             opcNum = ElegirOpcion(jugadores, "jugador");
-            
+
 
             //si no eligio salir del menu y eligio un jugador para borrar 
-            if(opcNum != -1)
+            if (opcNum != -1)
             {
                 Console.WriteLine("Ha elegido a este jugador");
                 jugadores[opcNum].PrintFull();
@@ -934,7 +934,7 @@ namespace TP01
                         {
                             jugadores.RemoveAt(opcNum);
                             Console.WriteLine("El jugador se ha dado de baja");
-                           
+
                         }
                         else  // presiono n o N
                         {
@@ -974,7 +974,7 @@ namespace TP01
                 Console.WriteLine();
 
                 //edicion DNI
-                while(true)
+                while (true)
                 {
                     Console.WriteLine("Desea modif el DNI (S/N)");
                     opc = Console.ReadLine();
@@ -982,15 +982,15 @@ namespace TP01
                     if (ValidaBool(opc))
                     {
                         //elije s, S
-                        if(ValidaSoN(opc))
+                        if (ValidaSoN(opc))
                         {
                             Console.WriteLine("ingrese nuevo dni");
                             opc = Console.ReadLine();
                             //valida que lo ingresado tenga formato dni
-                            if(VerificaDNIValido(opc))
+                            if (VerificaDNIValido(opc))
                             {
                                 //verif que no exista el dni 
-                                if(!DNIExistente(opc, jugadores))
+                                if (!DNIExistente(opc, jugadores))
                                 {
                                     //modifico el dni 
                                     jugadorTemp.dni = opc;
@@ -1029,7 +1029,7 @@ namespace TP01
                             Console.WriteLine("ingrese nuevo nombre");
                             opc = Console.ReadLine();
                             jugadorTemp.nombre = opc;
-                            break;                         
+                            break;
                         }
                         else //elije n, N
                         {
@@ -1063,7 +1063,7 @@ namespace TP01
                     }
                 }
                 //edicion edad
-                while(true)
+                while (true)
                 {
                     Console.WriteLine("Desea modif la edad ? (S/N)");
                     opc = Console.ReadLine();
@@ -1074,7 +1074,7 @@ namespace TP01
                         if (ValidaSoN(opc))
                         {
                             // bucle fuerza ingreso edad valido
-                            while(true)
+                            while (true)
                             {
                                 Console.WriteLine();
                                 Console.WriteLine("Ingrese la nueva edad: (1 a 99)");
@@ -1090,7 +1090,7 @@ namespace TP01
                                     List<Equipo> equiposRestantes = new List<Equipo>();
 
                                     //recorro el listado de equipos asignados para ver si debe dejar alguno
-                                    foreach(Equipo equip in jugadores[opcNumJug].equipAsig)
+                                    foreach (Equipo equip in jugadores[opcNumJug].equipAsig)
                                     {
                                         //si la nueva edad es <= a la cat del equipo asig
                                         if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria))
@@ -1103,18 +1103,18 @@ namespace TP01
                                         }
                                     }
                                     //si con el cambio de edad se eliminarian equipos
-                                    if(equiposASacar.Count > 0)
+                                    if (equiposASacar.Count > 0)
                                     {
                                         Console.WriteLine($"Con la nueva edad de {newEdad} el jugador no puede jugar mas en estos equipos:");
-                                        foreach(Equipo equip in equiposASacar)
+                                        foreach (Equipo equip in equiposASacar)
                                         {
                                             Console.WriteLine(equip.nombreEquipo);
                                         }
                                         //todavia tendria equipos restantes
-                                        if(equiposRestantes.Count > 0)
+                                        if (equiposRestantes.Count > 0)
                                         {
                                             Console.WriteLine("y sigue jugando en: ");
-                                            foreach(Equipo equip in equiposRestantes)
+                                            foreach (Equipo equip in equiposRestantes)
                                             {
                                                 Console.WriteLine(equip.nombreEquipo);
                                             }
@@ -1162,7 +1162,7 @@ namespace TP01
                         if (ValidaSoN(opc))
                         {
                             // bucle para forzar ingreso de estado seguro
-                            while(true)
+                            while (true)
                             {
                                 Console.WriteLine("Esta asegurado (S/N)");
                                 opc = Console.ReadLine();
@@ -1170,7 +1170,7 @@ namespace TP01
                                 if (ValidaBool(opc))
                                 {
                                     //si esta asgurado
-                                    if(ValidaSoN(opc))
+                                    if (ValidaSoN(opc))
                                     {
                                         jugadorTemp.seguro = true;
                                     }
@@ -1180,7 +1180,7 @@ namespace TP01
                                     }
                                     // salgo del bucle ingreso seguro
                                     break;
-                                }                                   
+                                }
                             }
                             ////sale del while seguro
                             //break;
@@ -1200,7 +1200,10 @@ namespace TP01
                 }
 
                 //edicion afiliado
-                while (true)
+                /*
+                 * Esta parte no se cambiaba BUG01
+                 */
+                /*while (true)
                 {
                     Console.WriteLine("Desea modif si esta afiliado (S/N)");
                     opc = Console.ReadLine();
@@ -1251,9 +1254,63 @@ namespace TP01
                 Console.WriteLine();
                 Console.WriteLine("Con las modificaciones tendra estos datos:");
                 jugadorTemp.PrintFull();
+                */
+                while (true)
+                {
+                    Console.WriteLine("Desea modif si esta afiliado (S/N)");
+                    opc = Console.ReadLine();
+                    //fuerzo ingreso de S, s, n o N
+                    if (ValidaBool(opc))
+                    {
+                        //elije s, S a modificacion
+                        if (ValidaSoN(opc))
+                        {
+                            // bucle para forzar ingreso de estado afiliado
+                            while (true)
+                            {
+                                Console.WriteLine("Esta afiliado (S/N)");
+                                opc = Console.ReadLine();
+                                //fuerzo ingreso de s, S, n o N
+                                if (ValidaBool(opc))
+                                {
+                                    //si esta afiliado
+                                    if (ValidaSoN(opc))
+                                    {
+                                        jugadorTemp.afiliado = true; // acá estaba el error se cambia seguro por afiliado BUG01
+                                    }
+                                    else //no esta afiliado
+                                    {
+                                        jugadorTemp.afiliado = false; // acá también se corrije BUG01
+                                    }
+                                    // salgo del bucle ingreso afiliado
+                                    break;
+                                }
+                            }
+                            //sale del while afiliado
+                            break;
+                        }
+                        else //elije n, N a modificacion
+                        {
+                            // sale del while de afiliado
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ingreso no valido!!!");
+                    }
+                }
+
+                Console.WriteLine("El jugador tenia estos datos:");
+                jugadores[opcNumJug].PrintFull();
+                Console.WriteLine();
+                Console.WriteLine("Con las modificaciones tendra estos datos:");
+                jugadorTemp.PrintFull();
+
+
 
                 //bucle de confirmacion de cambios
-                while(true)
+                while (true)
                 {
                     Console.WriteLine("Desea guardar los cambios? (S/N)");
                     opc = Console.ReadLine();
@@ -1281,14 +1338,14 @@ namespace TP01
                         }
                     }
                 }
-                
-      
+
+
             }
 
             LimpiarPantalla();
-            
+
         }
-        
+
         /// <summary>
         /// agrega un equipo a un jugador
         /// </summary>
@@ -1309,7 +1366,7 @@ namespace TP01
             //verif la opcion elegida ajustada al index del list
             opcNumJug = ElegirOpcion(jugadores, "jugador");
             // si no eligio salir del menu
-            if (opcNumJug != -1)  
+            if (opcNumJug != -1)
             {
                 // copio los datos del jugador seleccionado a uno temporal
                 jugadorTemp = jugadores[opcNumJug];
@@ -1336,7 +1393,7 @@ namespace TP01
                 equiposDisponibles = BuscarEquiposDisponibles(jugadorTemp, equipos);
 
                 //verifico que tenga equipos disponibles para agregar
-                if(equiposDisponibles.Count >0)
+                if (equiposDisponibles.Count > 0)
                 {
                     Console.WriteLine();
                     Console.WriteLine("Este es el listado de equipos disponibles: ");
@@ -1406,7 +1463,7 @@ namespace TP01
         {
             string opc;
             int opcNumJug = -1;
-            int opcNumEq = -1; 
+            int opcNumEq = -1;
             Jugador jugadorTemp = new Jugador();
 
             Console.WriteLine("QUITAR EQUIPO DE JUGADOR");
@@ -1416,7 +1473,7 @@ namespace TP01
             //verif la opcion elegida ajustada al index del list
             opcNumJug = ElegirOpcion(jugadores, "jugador");
 
-            if(opcNumJug != -1)  // si no eligio salir del menu
+            if (opcNumJug != -1)  // si no eligio salir del menu
             {
                 // copio los datos del jugador seleccionado a uno temporal
                 jugadorTemp = jugadores[opcNumJug];
@@ -1435,17 +1492,17 @@ namespace TP01
                     opcNumEq = ElegirOpcion(jugadores[opcNumJug].equipAsig, "equipo");
 
                     // si la opcion no es salir 
-                    if(opcNumEq != -1)
+                    if (opcNumEq != -1)
                     {
                         //fuerzo una respuesta valida x S o N
-                        while(true)
+                        while (true)
                         {
                             Console.WriteLine($"Desea confirmar que va a quitar al jugador del equipo {jugadorTemp.equipAsig[opcNumEq].nombreEquipo} (S/N)");
                             opc = Console.ReadLine();
                             if (ValidaBool(opc))
                             {
                                 //si eleigio s, S
-                                if(ValidaSoN(opc))
+                                if (ValidaSoN(opc))
                                 {
                                     // remuevo al equipo del jugador asignado
                                     jugadorTemp.QuitarDeEquipo(jugadorTemp.equipAsig[opcNumEq]);
@@ -1489,9 +1546,9 @@ namespace TP01
 
 
             }
-            
 
-            
+
+
         }
 
 
@@ -1507,15 +1564,15 @@ namespace TP01
             Console.WriteLine();
 
             int cant = 0;
-            foreach(Jugador jug in  jugadores)
+            foreach (Jugador jug in jugadores)
             {
-                if(jug.seguro)
+                if (jug.seguro)
                 {
-                   jug.PrintSmall();
-                   cant ++;
+                    jug.PrintSmall();
+                    cant++;
                 }
             }
-            if(cant == 0)
+            if (cant == 0)
             {
                 Console.WriteLine("No hay jugadores asegurados");
             }
@@ -1544,7 +1601,7 @@ namespace TP01
             }
 
             //si no hay jugadores lo informo
-            if(copia.Count == 0)
+            if (copia.Count == 0)
             {
                 Console.WriteLine("no hay jugadores en la liga");
             }
@@ -1574,7 +1631,7 @@ namespace TP01
                 }
 
                 Console.WriteLine(categoria[i]);
-                foreach(Jugador j in jugadoresCategoria)
+                foreach (Jugador j in jugadoresCategoria)
                 {
                     j.PrintSmall();
                 }
@@ -1585,7 +1642,7 @@ namespace TP01
             Espera();
             LimpiarPantalla();
         }
-   
+
 
         // REPORTES ******************************************************************
 
@@ -1614,7 +1671,7 @@ namespace TP01
 
                 masJoven = jugadores[0];
                 masViejo = jugadores[0];
-                for(int i = 1; i < jugadores.Count; i++)
+                for (int i = 1; i < jugadores.Count; i++)
                 {
                     if (jugadores[i].edad < masJoven.edad)
                     {
@@ -1643,7 +1700,7 @@ namespace TP01
         static void CantidadXCategoria(List<Jugador> jugadores)
         {
             // creo un array de int local con la misma cantidad de elementos q de categorias
-            int[] cantXCat = new int [categoria.Length];
+            int[] cantXCat = new int[categoria.Length];
 
             // recorro el list de jugadore y vos sumandola categoria
             foreach (Jugador j in jugadores)
@@ -1675,7 +1732,7 @@ namespace TP01
             float sumaEdades = 0;
 
             // verifico que haya jugadores en la liga
-            if(jugadores.Count > 0)
+            if (jugadores.Count > 0)
             {
                 foreach (Jugador jugador in jugadores)
                 {
@@ -1687,7 +1744,7 @@ namespace TP01
             else // si no hay jugadores
             {
                 Console.WriteLine("Actualmente la liga no tiene jugadores");
-                
+
             }
             Espera();
             LimpiarPantalla();
@@ -1696,18 +1753,18 @@ namespace TP01
         static void EquiposqueNecesitanJugadores(List<Equipo> equipos, List<Jugador> jugadores)
         {
             List<Equipo> equiposQuePrecisan = new List<Equipo>();
-            if(equipos.Count > 0)
+            if (equipos.Count > 0)
             {
-                foreach(Equipo equipo in equipos)
+                foreach (Equipo equipo in equipos)
                 {
-                    if(equipo.CantidadJugadoresEquipo(jugadores) < equipo.cantMinima)
+                    if (equipo.CantidadJugadoresEquipo(jugadores) < equipo.cantMinima)
                     {
                         equiposQuePrecisan.Add(equipo);
                     }
                 }
 
                 //si hay equipos con falta
-                if(equiposQuePrecisan.Count > 0)
+                if (equiposQuePrecisan.Count > 0)
                 {
                     Console.WriteLine("Estos equipos estan necesitando jugadores");
                     ImprimirListado(equiposQuePrecisan);
@@ -1789,7 +1846,7 @@ namespace TP01
         static void ImprimirListado(OpcionMenu[] menu)
         {
             int i = 1;
-            foreach(OpcionMenu opc in menu)
+            foreach (OpcionMenu opc in menu)
             {
                 Console.WriteLine($"{i} - {opc.nombreOpcion}");
                 i++;
@@ -1834,7 +1891,7 @@ namespace TP01
             foreach (var equip in equipos)
             {
                 Console.WriteLine($"{i} - {equip.nombreEquipo}");
-                
+
                 i++;
             }
         }
@@ -1849,7 +1906,7 @@ namespace TP01
         static bool ValidarOpcionElegida(OpcionMenu[] menu, string opc)
         {
             // valida que no sea una cadena vacia
-            if(opc.Length == 0)
+            if (opc.Length == 0)
             {
                 return false;
             }
@@ -1861,16 +1918,16 @@ namespace TP01
                     return false;
                 }
             }
-            
+
             //sabiendo que es digito lo convierte a entero
             int opcNum = int.Parse(opc);
 
             //valida que la opcion este dentro de las opciones del menu
-            if(opcNum <1 || opcNum > menu.Length)
-                { 
-                    return false; 
-                }
-    
+            if (opcNum < 1 || opcNum > menu.Length)
+            {
+                return false;
+            }
+
             // si esta todo correcto
             return true;
 
@@ -1953,7 +2010,7 @@ namespace TP01
             {
                 new OpcionMenu{ nombreOpcion = "Alta de Jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.AltaJugador },
                 new OpcionMenu{ nombreOpcion = "Baja de Jugador", tipoOpcion = TipoOpcion.Accion, accion = AccionMenu.BajaJugador },
-                new OpcionMenu{ nombreOpcion = "Modificacion de Jugador", tipoOpcion = TipoOpcion.Menu }, 
+                new OpcionMenu{ nombreOpcion = "Modificacion de Jugador", tipoOpcion = TipoOpcion.Menu },
                 new OpcionMenu{ nombreOpcion = "Volver atras", tipoOpcion = TipoOpcion.Menu }
             };
 
@@ -2079,7 +2136,7 @@ namespace TP01
                     CantidadXCategoria(jugadores);
                     break;
 
-                case AccionMenu.PromedioEdad:   
+                case AccionMenu.PromedioEdad:
                     PromedioEdad(jugadores);
                     break;
 
@@ -2211,10 +2268,10 @@ namespace TP01
             List<String> categoriasDisponibles = new List<String>();
 
             //recorro todas las categorias disponibles
-            foreach(String cat in categoria)
+            foreach (String cat in categoria)
             {
                 //si es la que pase actual no la agrego
-                if(cat == catActual)
+                if (cat == catActual)
                 {
                     continue;
                 }
@@ -2252,11 +2309,11 @@ namespace TP01
         /// <param name="dni"></param>     string con el numero de dni a buscar
         /// <param name="jugadores"></param>  List de elem Jugador, con todos los jugadores de la liga
         /// <returns></returns>
-        static bool DNIExistente (string dni, List<Jugador> jugadores)
+        static bool DNIExistente(string dni, List<Jugador> jugadores)
         {
-            foreach(Jugador jug in jugadores)
+            foreach (Jugador jug in jugadores)
             {
-                if(jug.dni == dni)
+                if (jug.dni == dni)
                 {
                     return true;
                 }
@@ -2286,7 +2343,7 @@ namespace TP01
             }
 
             int valorNum = int.Parse(valor);
-            if(valorNum < valorMin || valorNum > valorMax)
+            if (valorNum < valorMin || valorNum > valorMax)
             {
                 return false;
             }
@@ -2301,7 +2358,7 @@ namespace TP01
         /// <returns></returns>
         static bool ValidaBool(string valor)
         {
-            switch(valor)
+            switch (valor)
             {
                 case "s":
                 case "S":
@@ -2325,7 +2382,7 @@ namespace TP01
                 case "s":
                 case "S":
                     return true;
-                    
+
                 case "n":
                 case "N":
                     return false;
@@ -2344,7 +2401,7 @@ namespace TP01
         /// <param name="listado"></param> listado generaico 
         /// <param name="tipo"></param>  puede ser jugador o equipo en principio
         /// <returns></returns>  el numero elegido dentro del listado, -1 si es que desea salir de la eleccion
-        static int ElegirOpcion<T> (List<T> listado, string tipo)
+        static int ElegirOpcion<T>(List<T> listado, string tipo)
         {
             string opc;
             int opcNum = -1;
@@ -2379,35 +2436,35 @@ namespace TP01
         /// <param name="jugador"></param> jugador al que quiero agregar un nuevo equipo
         /// <param name="equipos"></param> el listado de todos los equipos de la liga
         /// <returns>el listado de equipos a los que lo puedo agregar</returns>
-        static List<Equipo> BuscarEquiposDisponibles(Jugador jugador,  List<Equipo> equipos)
+        static List<Equipo> BuscarEquiposDisponibles(Jugador jugador, List<Equipo> equipos)
         {
             //creto una variable con el nombre de club si ya tiene equipos asig
             string nombreClub = "";
             //creo una list de equipos disponibles para devolver
             List<Equipo> equiposDisp = new List<Equipo>();
             // si ya tiene equipos asignados obtengo el club *** solo puede jugar en un club
-            if(jugador.equipAsig.Count > 0)
+            if (jugador.equipAsig.Count > 0)
             {
                 nombreClub = jugador.equipAsig[0].nombreClub;
             }
 
-            foreach(Equipo equip in equipos)
+            foreach (Equipo equip in equipos)
             {
                 //si el jugador ya juega en un club y el club del equipo es otro
-                if(nombreClub != "" && equip.nombreClub != nombreClub)
+                if (nombreClub != "" && equip.nombreClub != nombreClub)
                 {
                     continue;
                 }
 
                 //si la edad del jugador es menor o igual a la de la categoria del equipo 
-                if(jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria))
+                if (jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria))
                 {
                     bool yaEsta = false;
-                    
-                    foreach(Equipo asig in jugador.equipAsig)
+
+                    foreach (Equipo asig in jugador.equipAsig)
                     {
                         //recorro los equipos que ya tiene asig el jugador para ver si equip ya se encuentra
-                        if(asig.nombreEquipo == equip.nombreEquipo)
+                        if (asig.nombreEquipo == equip.nombreEquipo)
                         {
                             yaEsta = true;
                             break;
@@ -2415,16 +2472,16 @@ namespace TP01
                     }
 
                     //si no se encontraba lo agrego al list
-                    if(!yaEsta)
+                    if (!yaEsta)
                     {
                         equiposDisp.Add(equip);
                     }
-                    
+
                 }
             }
 
             return equiposDisp;
-        }  
+        }
         /// <summary>
         /// Funcion para elegir que jugadores pueden ingresar a un equipo
         /// </summary>
@@ -2461,7 +2518,7 @@ namespace TP01
 
             return jugadoresCandidatos;
         }
-        
+
 
 
         //**************************************************************************************************
@@ -2490,7 +2547,7 @@ namespace TP01
             OpcionMenu[] currentMenu = menuPrincipal;
 
             //loop principal del programa
-            while(true)
+            while (true)
             {
                 //inicializo la opcion de seleccion en null
                 string opc = null;
