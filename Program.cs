@@ -793,6 +793,7 @@ namespace TP01
             }
         }
         //ABM DE JUGADORES 
+
         /// <summary>
         /// Alta Jugador crea una nueva copia de struct Jugador
         /// </summary>
@@ -1693,29 +1694,35 @@ namespace TP01
             LimpiarPantalla();
         }
 
+        /// <summary>
+        /// Funcion que realiza la accion de listar los equipos que no tienen la cantidad necesaria de jugadores
+        /// </summary>
+        /// <param name="equipos"></param>
+        /// <param name="jugadores"></param>
         static void EquiposqueNecesitanJugadores(List<Equipo> equipos, List<Jugador> jugadores)
         {
-            List<Equipo> equiposQuePrecisan = new List<Equipo>();
+            int cantEquipPrecisan = 0;
             if(equipos.Count > 0)
             {
                 foreach(Equipo equipo in equipos)
                 {
                     if(equipo.CantidadJugadoresEquipo(jugadores) < equipo.cantMinima)
                     {
-                        equiposQuePrecisan.Add(equipo);
+                      
+                        int cantJug = equipo.CantidadJugadoresEquipo(jugadores);
+                        int cantMin = equipo.cantMinima;
+                        int precisa = cantMin - cantJug;
+                        Console.WriteLine($"El equipo {equipo.nombreEquipo} tiene {cantJug} jugadores, la cantidad minima que requiere es de {cantMin}, precisa {precisa} {(precisa > 1?"jugadores":"jugador")} más");
+                        cantEquipPrecisan++;
                     }
                 }
 
                 //si hay equipos con falta
-                if(equiposQuePrecisan.Count > 0)
-                {
-                    Console.WriteLine("Estos equipos estan necesitando jugadores");
-                    ImprimirListado(equiposQuePrecisan);
-                }
-                else //ningun equipo precisa jugadores
+                if(cantEquipPrecisan ==  0)
                 {
                     Console.WriteLine("Ningun equipo esta precisando jugadores");
                 }
+
             }
             else
             {
@@ -1813,7 +1820,7 @@ namespace TP01
         /// <summary>
         /// Imprime un listado de los elem de una List de Equipo
         /// </summary>
-        /// <param name="equipos"></param> Listado de Equipo
+        /// <param name="equipos"></param> Listado de Equipos
         static void ImprimirListado(List<Jugador> jugadores)
         {
             int i = 1;
@@ -1828,6 +1835,10 @@ namespace TP01
             }
         }
 
+        /// <summary>
+        /// Imprime un listado con un numero de orden al lado
+        /// </summary>
+        /// <param name="equipos"></param>  un listado de elementos equipo
         static void ImprimirListado(List<Equipo> equipos)
         {
             int i = 1;
@@ -1876,61 +1887,75 @@ namespace TP01
 
         }
 
+        ///// <summary>
+        ///// Valida que la opcion elegida
+        ///// </summary>
+        ///// <param name="lista"></param> array de strings
+        ///// <param name="opc"></param> El ingreso por teclado hecho por el usuario
+        ///// <returns></returns>
+        //static bool ValidarOpcionElegida(string[] lista, string opc)
+        //{
+        //    // valida que no sea una cadena vacia
+        //    if (opc.Length == 0)
+        //    {
+        //        return false;
+        //    }
+        //    // valida que cada char de la cadena sea un digito
+        //    for (int i = 0; i < opc.Length; i++)
+        //    {
+        //        if (!char.IsDigit(opc[i]))
+        //        {
+        //            return false;
+        //        }
+        //    }
+
+        //    //sabiendo que es digito lo convierte a entero
+        //    int opcNum = int.Parse(opc);
+
+        //    //valida que la opcion este dentro de las opciones del menu
+        //    if (opcNum < 1 || opcNum > lista.Length)
+        //    {
+        //        return false;
+        //    }
+
+        //    // si esta todo correcto
+        //    return true;
+
+        //}
         /// <summary>
-        /// Valida que la opcion elegida
+        /// Valida que la opcion elegida sea un numero que sea un elemento de una lista
         /// </summary>
-        /// <param name="lista"></param> array de strings
-        /// <param name="opc"></param> El ingreso por teclado hecho por el usuario
-        /// <returns></returns>
-        static bool ValidarOpcionElegida(string[] lista, string opc)
-        {
-            // valida que no sea una cadena vacia
-            if (opc.Length == 0)
-            {
-                return false;
-            }
-            // valida que cada char de la cadena sea un digito
-            for (int i = 0; i < opc.Length; i++)
-            {
-                if (!char.IsDigit(opc[i]))
-                {
-                    return false;
-                }
-            }
-
-            //sabiendo que es digito lo convierte a entero
-            int opcNum = int.Parse(opc);
-
-            //valida que la opcion este dentro de las opciones del menu
-            if (opcNum < 1 || opcNum > lista.Length)
-            {
-                return false;
-            }
-
-            // si esta todo correcto
-            return true;
-
-        }
+        /// <typeparam name="T"></typeparam>   tipo de elemento en la lista
+        /// <param name="lista"></param>  Lista de la cual tiene que elegir un elemento
+        /// <param name="opc"></param>   string con la opcion ingresada 
+        /// <returns>true si es valido false si no es valido</returns>
         static bool ValidarOpcionElegida<T>(List<T> lista, string opc)
         {
+            //si se ingreso nulo
             if (string.IsNullOrEmpty(opc))
                 return false;
 
+            //si no se ingreso un digito 
             foreach (char c in opc)
             {
                 if (!char.IsDigit(c))
                     return false;
             }
 
+            //paresa a int
             int opcNum = int.Parse(opc);
 
+            //si el digito no corresponde a un elemento de la lista
             if (opcNum < 1 || opcNum > lista.Count)
                 return false;
 
             return true;
         }
 
-        //funcion que inicializa los menues
+        
+        /// <summary>
+        /// funcion que inicializa los menues 
+        /// </summary>
         static void InicializarMenues()
         {
             administrarEquipos = new OpcionMenu[]
@@ -2014,7 +2039,13 @@ namespace TP01
             reportes[4].newMenu = menuPrincipal;
         }
 
-        //funcion que analiza cual es la accion y la ejecuta
+        
+        /// <summary>
+        /// funcion que analiza cual es la accion y la ejecuta la funcion asociada
+        /// </summary>
+        /// <param name="accion"></param>
+        /// <param name="equipos"></param>   el listado de todos los equipos de la liga
+        /// <param name="jugadores"></param> el listado de todos los jugadores de la liga
         static void EjecutarAccion(AccionMenu accion, List<Equipo> equipos, List<Jugador> jugadores)
         {
             switch (accion)
@@ -2149,16 +2180,26 @@ namespace TP01
             return resultado;
         }
 
+        /// <summary>
+        /// Convierte una etiqueta de letras en un número entero
+        /// </summary>
+        /// <param name="etiqueta"></param>
+        /// <returns>un numero entero que representa un entero </returns>
         static int ConvertirEtiquetaANumero(string etiqueta)
         {
+            // Variable donde se va acumulando el resultado final
             int resultado = 0;
 
+            // Recorre cada letra de la etiqueta
             foreach (char c in etiqueta)
             {
+
                 resultado *= 26;
+
+                // 'A' = 1, 'B' = 2, ..., 'Z' = 26 , 'AA' = 27, 'AB' = 28, ......
                 resultado += (c - 'A' + 1);
             }
-
+            // Resta 1 para que la numeración empiece desde 0
             return resultado - 1;
         }
 
