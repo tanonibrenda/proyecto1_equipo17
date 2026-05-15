@@ -8,7 +8,7 @@
 //************************************************************************************************** 
 
 // Formato: Ctrl + K  luego Ctrl + D
-//BUG06
+//BUG07
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace TP01
     internal class Program
     {
         //**************************************************************************************************
-        //*** ESTRUCUTRAS PRINCIPALES///
+        //*** ESTRUCUTRAS PRINCIPALES/// 
         //************************************************************************************************** 
         public static readonly string[] categoria =
         {
@@ -663,7 +663,7 @@ namespace TP01
                                     Espera();
 
                                 }
-                                else // eliigio n, N
+                                else // eligio n, N
                                 {
                                     Console.WriteLine("Ud, ha anulado el ingreso del jugador al equipo");
                                     Espera();
@@ -683,6 +683,8 @@ namespace TP01
                 else //no hay jugadores que pueden ingresar
                 {
                     Console.WriteLine("Actualmente no hay ningun jugador que puede ingresar al equipo");
+                    //Agregado BUG07
+                    Espera() ;
                 }
                 LimpiarPantalla();
             }
@@ -1125,7 +1127,9 @@ namespace TP01
                                         //si la nueva edad es <= a la cat del equipo asig
                                         //if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria))
                                         // Modificado por BUG06
-                                        if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria) && newEdad >= ObtenerEdadMinCategoria(equip.categoria))
+                                        //if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria) && newEdad >= ObtenerEdadMinCategoria(equip.categoria))
+                                        // Modificado por BUG07 para que se permite elegir más de un equipo dentro del mismo club, si respeta la edad
+                                        if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria))
                                         {
                                             equiposRestantes.Add(equip);
                                         }
@@ -2550,7 +2554,9 @@ namespace TP01
                 //si la edad del jugador es menor o igual a la de la categoria del equipo 
                 //if (jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria))
                 // Modificado por BUG06
-                if (jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria) && jugador.edad >= ObtenerEdadMinCategoria(equip.categoria))
+                //if (jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria) && jugador.edad >= ObtenerEdadMinCategoria(equip.categoria))
+                // Modificado por BUG07, para poder elegir más de un equipo por club en la misma categoría
+                /*if (jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria))
                 {
                     bool yaEsta = false;
 
@@ -2570,7 +2576,36 @@ namespace TP01
                         equiposDisp.Add(equip);
                     }
 
+                }*/
+
+                if (jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria))
+                {
+                    // Validación extra: Nadie menor a 35 puede jugar en la categoría Veteranos
+                    if (equip.categoria == "Veteranos" && jugador.edad < 35)
+                    {
+                        continue; // Salta este equipo y pasa al siguiente a evaluar
+                    }
+
+                    bool yaEsta = false;
+
+                    foreach (Equipo asig in jugador.equipAsig)
+                    {
+                        // recorro los equipos que ya tiene asig el jugador para ver si equip ya se encuentra
+                        if (asig.nombreEquipo == equip.nombreEquipo)
+                        {
+                            yaEsta = true;
+                            break;
+                        }
+                    }
+
+                    // si no se encontraba lo agrego al list
+                    if (!yaEsta)
+                    {
+                        equiposDisp.Add(equip);
+                    }
                 }
+
+
             }
 
             return equiposDisp;
@@ -2598,8 +2633,14 @@ namespace TP01
                 // if (jug.edad > ObtenerEdadMaxCategoria(equipo.categoria))
                 /* Se cambio por BUG06 verificar edad mínima y máxima. 
                  * */
-                if (jug.edad > ObtenerEdadMaxCategoria(equipo.categoria) || jug.edad < ObtenerEdadMinCategoria(equipo.categoria))
-
+                //if (jug.edad > ObtenerEdadMaxCategoria(equipo.categoria) || jug.edad < ObtenerEdadMinCategoria(equipo.categoria))
+                // Se modifica de BUG07 para permitir elegir más de un equipo por club en la misma categoría
+                if (jug.edad > ObtenerEdadMaxCategoria(equipo.categoria))
+                {
+                    continue;
+                }
+                // Agrego validación extra para que nadie menor a 35 pueda jugar en la categoría Veteranos
+                if (equipo.categoria == "Veteranos" && jug.edad < 35)
                 {
                     continue;
                 }
