@@ -8,7 +8,7 @@
 //************************************************************************************************** 
 
 // Formato: Ctrl + K  luego Ctrl + D
-
+//BUG06
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -1123,7 +1123,9 @@ namespace TP01
                                     foreach (Equipo equip in jugadores[opcNumJug].equipAsig)
                                     {
                                         //si la nueva edad es <= a la cat del equipo asig
-                                        if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria))
+                                        //if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria))
+                                        // Modificado por BUG06
+                                        if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria) && newEdad >= ObtenerEdadMinCategoria(equip.categoria))
                                         {
                                             equiposRestantes.Add(equip);
                                         }
@@ -1132,6 +1134,8 @@ namespace TP01
                                             equiposASacar.Add(equip);
                                         }
                                     }
+                                    //
+
                                     //si con el cambio de edad se eliminarian equipos
                                     if (equiposASacar.Count > 0)
                                     {
@@ -2287,6 +2291,32 @@ namespace TP01
             }
             return edadMax;
         }
+        // Acá BUG06
+        /// <summary>
+        /// Devuelve la edad mínima permitida para una categoría
+        /// </summary>
+        static int ObtenerEdadMinCategoria(string categoria)
+        {
+            switch (categoria)
+            {
+                case "Infantiles":
+                    return 1; // O la edad mínima que consideres para infantiles
+                case "Cadetes":
+                    return 13;
+                case "Juveniles":
+                    return 16;
+                case "Primera":
+                    return 18;
+                case "Veteranos":
+                    return 35;
+                default:
+                    return 1;
+            }
+        }
+
+
+
+        //====
 
         /// <summary>
         /// Devuelve un arreglo de categorias distintas a la que tiene 
@@ -2518,7 +2548,9 @@ namespace TP01
                 }
 
                 //si la edad del jugador es menor o igual a la de la categoria del equipo 
-                if (jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria))
+                //if (jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria))
+                // Modificado por BUG06
+                if (jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria) && jugador.edad >= ObtenerEdadMinCategoria(equip.categoria))
                 {
                     bool yaEsta = false;
 
@@ -2563,7 +2595,11 @@ namespace TP01
                 }
 
                 // verifico edad maxima de categoria
-                if (jug.edad > ObtenerEdadMaxCategoria(equipo.categoria))
+                // if (jug.edad > ObtenerEdadMaxCategoria(equipo.categoria))
+                /* Se cambio por BUG06 verificar edad mínima y máxima. 
+                 * */
+                if (jug.edad > ObtenerEdadMaxCategoria(equipo.categoria) || jug.edad < ObtenerEdadMinCategoria(equipo.categoria))
+
                 {
                     continue;
                 }
