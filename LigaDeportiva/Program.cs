@@ -8,7 +8,7 @@
 //************************************************************************************************** 
 
 // Formato: Ctrl + K  luego Ctrl + D
-//RE02
+// BUG09: 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -549,163 +549,139 @@ LimpiarPantalla();
 
         static void ModificarDatosEquipo(List<Equipo> equipos, List<Jugador> jugadores)
         {
-            // solo se permite cambiar la categoria del equipo, el nombre es creado automaticamente y el club, es parte del nombre.
-            // la cant minima de jugadores depende de la categoria
             int opcNumEq;
             Console.WriteLine("MODIFICAR EQUIPO");
             Console.WriteLine("Solo se permite modificar la categoria del equipo, para otros cambios dar baja y nueva alta");
             Console.WriteLine("Este es el listado de Equipos: ");
             Console.WriteLine();
+
             // imprime listado de equipos
             ImprimirListado(equipos);
             // elegir equipo
             opcNumEq = ElegirOpcion(equipos, "equipo");
+
             // si no eligio salir
             if (opcNumEq != -1)
             {
                 Console.WriteLine("Ha elegido a este equipo");
                 equipos[opcNumEq].PrintFull(jugadores);
                 Console.WriteLine();
-                //fuerza respuesta corrcta
+
+                //fuerza respuesta correcta
                 while (true)
                 {
                     Console.WriteLine("Desea Cambiar la Categoria? (S/N)");
                     string opc = Console.ReadLine();
+
                     //valida que elija s,S, n o N
                     if (ValidaBool(opc))
                     {
                         //si eleigio s, S
                         if (ValidaSoN(opc))
                         {
+                            // 1. OBTENEMOS LA NUEVA CATEGORIA (Lo que se había quedado comentado)
                             Console.WriteLine($"La categoria actual es {equipos[opcNumEq].categoria}");
                             String[] categoriasDisp = ObtenerCategoriasDisponibles(equipos[opcNumEq].categoria);
                             Console.WriteLine("Las categorias disponibles son:");
                             ImprimirListado(categoriasDisp);
                             Console.WriteLine();
+
                             int opcNumCat = ElegirOpcion(categoriasDisp.ToList<String>(), "categorias");
+
                             // si no eligio salir
                             if (opcNumCat != -1)
                             {
-                                //creo un equipoTemporal
                                 Equipo equipoTemp = equipos[opcNumEq];
-                                int edadMaxOrig = ObtenerEdadMaxCategoria(equipoTemp.categoria);
-                                int edadMaxNueva = ObtenerEdadMaxCategoria(categoriasDisp[opcNumCat]);
-                                //filtrar jugadores x edad
-                                List<Jugador> jugadoresAQuitar = new List<Jugador>();
-                                List<Jugador> jugadoresQueQuedan = new List<Jugador>();
-                                //si la edad maxima de la categoria original es mayor a la de la edad max de la nueva categoria y el equipo tiene jugadores
-                                if (edadMaxOrig > edadMaxNueva && equipoTemp.CantidadJugadoresEquipo(jugadores) > 0)
+                                string nuevaCategoria = categoriasDisp[opcNumCat];
+
+                                // 2. EVALUAR JUGADORES ACTUALES CONTRA LA NUEVA CATEGORÍA
+                                List<Jugador> jugadoresIncompatibles = new List<Jugador>();
+
+                                foreach (Jugador jug in equipoTemp.ListadoDeJugadores(jugadores))
                                 {
-
-
-                                    foreach (Jugador jug in equipoTemp.ListadoDeJugadores(jugadores))
+                                    // Regla 1: Supera la edad máxima permitida para la categoría
+                                    if (jug.edad > ObtenerEdadMaxCategoria(nuevaCategoria))
                                     {
-                                        if (jug.edad > edadMaxNueva)
+                                        jugadoresIncompatibles.Add(jug);
+                                    }
+                                    // Regla 2: Regla específica para Veteranos (Nadie menor a 35)
+                                    else if (nuevaCategoria == "Veteranos" && jug.edad < 35)
+                                    {
+                                        jugadoresIncompatibles.Add(jug);
+                                    }
+                                }
+
+                                // 3. APLICAR LA REGLA: BLOQUEAR SI HAY INCOMPATIBLES
+                                if (jugadoresIncompatibles.Count > 0)
+                                {
+                                    Console.WriteLine($"\nREGLA DE LA LIGA: No se puede cambiar a la categoría '{nuevaCategoria}'.");
+                                    Console.WriteLine("El equipo tiene jugadores cuyas edades no son compatibles con la nueva categoría:");
+
+                                    foreach (Jugador jug in jugadoresIncompatibles)
+                                    {
+                                        Console.WriteLine($"- {jug.nombre} {jug.apellido} (Edad: {jug.edad})");
+                                    }
+
+                                    Console.WriteLine("\nPor favor, quite o reasigne a estos jugadores antes de intentar cambiar la categoría.");
+                                    Espera();
+                                }
+                                else
+                                {
+                                    // 4. SI TODOS CUMPLEN, PEDIMOS CONFIRMACIÓN PARA GUARDAR
+                                    while (true)
+                                    {
+                                        Console.WriteLine($"¿Desea confirmar el cambio a la categoría {nuevaCategoria}? (S/N)");
+                                        string opcConf = Console.ReadLine();
+
+                                        if (ValidaBool(opcConf))
                                         {
-                                            jugadoresAQuitar.Add(jug);
+                                            if (ValidaSoN(opcConf))
+                                            {
+                                                // Actualizo la categoría
+                                                equipoTemp.categoria = nuevaCategoria;
+
+                                                // Actualizo la cantidad mínima según la nueva categoría
+                                                if (equipoTemp.categoria == "Veteranos")
+                                                {
+                                                    equipoTemp.cantMinima = 10;
+                                                }
+                                                else
+                                                {
+                                                    equipoTemp.cantMinima = 9;
+                                                }
+
+                                                // Piso al equipo con los datos modificados
+                                                equipos[opcNumEq] = equipoTemp;
+
+                                                Console.Write("Se han guardado los cambios.\n");
+                                                Espera();
+                                            }
+                                            else // eligio n, N
+                                            {
+                                                Console.WriteLine("Ud. ha anulado la modificación del equipo.");
+                                                Espera();
+                                            }
+                                            break; // sale del while de confirmación
                                         }
                                         else
                                         {
-                                            jugadoresQueQuedan.Add(jug);
+                                            Console.WriteLine("Ingreso no válido");
                                         }
-                                    }
-
-                                    //si hay que quitar jugadores
-                                    if (jugadoresAQuitar.Count > 0)
-                                    {
-                                        Console.WriteLine("El cambio de categoria forzaria a quitar a los siguentes jugadores:");
-                                        ImprimirListado(jugadoresAQuitar);
-                                        Console.WriteLine();
-                                    }
-
-                                    //si quedan jugadores
-                                    if (jugadoresQueQuedan.Count > 0)
-                                    {
-                                        Console.WriteLine("Quedando solo los siguentes jugadores:");
-                                        ImprimirListado(jugadoresQueQuedan);
-                                        Console.WriteLine();
-                                    }
-                                    else //no quedan jugadores
-                                    {
-                                        Console.WriteLine("No quedando ningun jugador en el equipo");
-                                    }
-
-
-                                }
-                                //fuerza la eleccion 
-                                while (true)
-                                {
-                                    Console.WriteLine("Desea guardar los cambios? (S/N)");
-                                    opc = Console.ReadLine();
-                                    //valida que elija s,S, n o N
-                                    if (ValidaBool(opc))
-                                    {
-                                        //si eleigio s, S
-                                        if (ValidaSoN(opc))
-                                        {
-                                            //modifico el equipo asig en cada jugador a quitar
-                                            foreach (Jugador jug in jugadoresAQuitar)
-                                            {
-                                                jug.QuitarDeEquipo(equipoTemp);
-                                                //piso el estado de los jugadores a quitar en la lista de los jugadores de la liga
-                                                for (int i = 0; i < jugadores.Count; i++)
-                                                {
-                                                    if (jug.dni == jugadores[i].dni)
-                                                    {
-                                                        jugadores[i] = jug;
-                                                        break;
-                                                    }
-                                                }
-                                            }
-
-                                            //actualizo en el equipoTemp la categoria
-                                            equipoTemp.categoria = categoriasDisp[opcNumCat];
-
-                                            //actualizo la cantMinima de jugadores si la nueva categoria es veteranos
-                                            if (equipoTemp.categoria == "Veteranos")
-                                            {
-                                                equipoTemp.cantMinima = 10;
-                                            }
-                                            else
-                                            {
-                                                equipoTemp.cantMinima = 9;
-                                            }
-
-                                            //piso al equipo con los datos modificados
-                                            equipos[opcNumEq] = equipoTemp;
-
-                                            Console.Write("Se han guardado los cambios \n");
-                                            Espera();
-
-                                        }
-                                        else // eligio n, N
-                                        {
-                                            Console.WriteLine("Ud, ha anulado la modificacion del equipo");
-                                            Espera();
-                                        }
-                                        //sale del while de grabacion de cambio
-                                        break;
-                                    }
-                                    else // no ingreso s, S, n, N
-                                    {
-                                        Console.WriteLine("Ingreso no valido");
                                     }
                                 }
                             }
                             LimpiarPantalla();
                         }
-                        else // eliigio n, N
+                        else // eligio n, N
                         {
-                            Console.WriteLine("Ud, ha anulado la modificacion del equipo");
+                            Console.WriteLine("Ud. ha anulado la modificación del equipo.");
                             Espera();
                         }
-                        //sale del while de respuesta correcta
-                        break;
-
+                        break; // sale del while de respuesta correcta
                     }
-                    else // no ingreso s, S, n, N
+                    else
                     {
-                        Console.WriteLine("Ingreso no valido");
+                        Console.WriteLine("Ingreso no válido");
                     }
                 }
                 LimpiarPantalla();
@@ -1722,6 +1698,7 @@ LimpiarPantalla();
             {
                 Console.WriteLine("No hay jugadores asegurados");
             }
+            
             Espera();
             LimpiarPantalla();
         }
