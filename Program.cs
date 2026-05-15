@@ -11,13 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static TP01.Program;
-//using System.Data.SqlTypes;
-//using System.Linq;
-//using System.Net;
-//using System.Runtime.CompilerServices;
-//using System.Runtime.InteropServices.WindowsRuntime;
-//using System.Text;
-//using System.Threading.Tasks;
+
 
 namespace TP01
 {
@@ -26,6 +20,10 @@ namespace TP01
         //**************************************************************************************************
         //*** ESTRUCUTRAS PRINCIPALES///
         //************************************************************************************************** 
+
+        /// <summary>
+        /// array de categorias
+        /// </summary>
         public static readonly string[] categoria =
         {
             "Infantiles",     //  < 13
@@ -35,6 +33,9 @@ namespace TP01
             "Veteranos"       //  >=35 
         };
 
+        /// <summary>
+        /// struct Equipo
+        /// </summary>
         public struct Equipo
         {
             public string nombreEquipo;
@@ -64,6 +65,12 @@ namespace TP01
                 }
                 return false;
             }
+
+            /// <summary>
+            /// funcion que calcula los jugadores de un equipo
+            /// </summary>
+            /// <param name="jugadores"></param> recibe el listado de jugadores de la liga
+            /// <returns>cantida de jugadores del equipo</returns>
             public int CantidadJugadoresEquipo(List<Jugador> jugadores)
             {
                 int cant = 0;
@@ -77,6 +84,11 @@ namespace TP01
                 return cant;
             }
 
+            /// <summary>
+            /// funcion que obtiene los jugadores de un equiop
+            /// </summary>
+            /// <param name="jugadores"></param> recibe el listado de todos los jugadores de la liga
+            /// <returns>el listdo de jugadores del equipo</returns>
             public List<Jugador> ListadoDeJugadores(List<Jugador>jugadores)
             {
                 List<Jugador> jugadoresEnEqupipo = new List<Jugador>();
@@ -90,7 +102,9 @@ namespace TP01
                 return jugadoresEnEqupipo;
             }
 
-            // se utiliza por combatilibad entre genericos de Jugador y Equipo
+            /// <summary>
+            /// Funcion que imprime los datos resumidos del equipo 
+            /// </summary>
             public void PrintSmall()
             {
                 Console.WriteLine($"nombre del equipo : {nombreEquipo}");
@@ -99,6 +113,9 @@ namespace TP01
                 Console.WriteLine($"Cantidad minima de jugadores : {cantMinima}");
             }
 
+            /// <summary>
+            /// Funcion que imprime los datos expandidos del equipo 
+            /// </summary>
             public void PrintFull(List<Jugador> jugadores)
             {
                 PrintSmall();
@@ -107,6 +124,9 @@ namespace TP01
 
         }
 
+        /// <summary>
+        /// Estructura Jugador
+        /// </summary>
         public struct Jugador
         {
             public string dni;
@@ -119,7 +139,7 @@ namespace TP01
 
 
             /// <summary>
-            /// Verif si un jugador esta en un equipo
+            /// Verif si el jugador esta en un equipo
             /// </summary>
             /// <param name="equipo"></param>
             /// <returns>true si esta, false si no esta</returns>
@@ -137,7 +157,7 @@ namespace TP01
             }
 
             /// <summary>
-            /// agrega un equipo a un jugador
+            /// agrega un equipo al jugador
             /// </summary>
             /// <param name="equipo"></param> recibe un Equipo
             public void AgregarAEquipo(Equipo equipo)
@@ -171,7 +191,9 @@ namespace TP01
                 }
             }
 
-
+            /// <summary>
+            /// Imprime los datos resumidos de un jugador
+            /// </summary>
             public void PrintSmall()
             {
                 Console.WriteLine($"DNI : {dni}");
@@ -179,6 +201,10 @@ namespace TP01
                 Console.WriteLine($"Apellido : {apellido}");
                 Console.WriteLine($"Edad : {edad}");
             }
+
+            /// <summary>
+            /// Imprime los datos expandidos de un jugador
+            /// </summary>
             public void PrintFull()
             {
                 Console.WriteLine($"DNI : {dni}");
@@ -206,13 +232,18 @@ namespace TP01
         //************************************************************************************************** 
 
 
-        // define el tipo de opcion que puedo tener dentro de un menu
+        /// <summary>
+        /// define el tipo de opcion que puedo tener dentro de un menu
+        /// </summary>
         enum TipoOpcion
         {
             Accion, 
             Menu
         }
 
+        /// <summary>
+        /// acciones posibles
+        /// </summary>
         enum AccionMenu
         {
             AltaEquipo,                 //alta de equipo 
@@ -235,7 +266,10 @@ namespace TP01
             Exit                        //salir del programa
         }
 
-        //define en que consiste una opcion de menu
+       
+        /// <summary>
+        /// estructura que define en que consiste una opcion de menu
+        /// </summary>
         struct OpcionMenu
         {
             public string nombreOpcion;
@@ -244,7 +278,10 @@ namespace TP01
             public AccionMenu accion;
         }
 
-        // declaro los menues
+
+        /// <summary>
+        /// declaracion de los menues
+        /// </summary>
         static OpcionMenu[] administrarEquipos;
         static OpcionMenu[] modificarEquipos;
         static OpcionMenu[] administrarJugadores;
@@ -258,7 +295,12 @@ namespace TP01
         //************************************************************************************************** 
 
 
-        // ABM DE EQUIPOS
+        // ABM DE EQUIPOS ******************************************
+
+        /// <summary>
+        /// Funcion que da de alta un equipo en la liga
+        /// </summary>
+        /// <param name="equipos"></param>  recibe la lista de todos los equipos de la liga
         static void AltaEquipo(List<Equipo> equipos)
         {
             //inicializo variables, para guardar los parametros antes de crear el equioo
@@ -333,6 +375,11 @@ namespace TP01
             LimpiarPantalla();
         }
 
+        /// <summary>
+        /// Funcion que quita un equipo de la liga
+        /// </summary>
+        /// <param name="equipos"></param>  recibe un listado de todos los equipos de la liga
+        /// <param name="jugadores"></param> recibe un listado de todos los jugadores de la liga
         static void BajaEquipo(List<Equipo> equipos, List<Jugador> jugadores)
         {
             int opcNumEq;
@@ -437,6 +484,11 @@ namespace TP01
 
         }
 
+        /// <summary>
+        /// Funcion que modifica la categoria de un equipo, para otros parametros corresponde baja y alta
+        /// </summary>
+        /// <param name="equipos"></param>     recibe el listado de equipos de la liga
+        /// <param name="jugadores"></param>   recibe el listado de jugadores de la liga
         static void ModificarDatosEquipo(List<Equipo> equipos, List<Jugador> jugadores)
         {
             // solo se permite cambiar la categoria del equipo, el nombre es creado automaticamente y el club, es parte del nombre.
@@ -602,6 +654,11 @@ namespace TP01
             }
         }
 
+        /// <summary>
+        /// Funcion que agrega un equipo al listdo de equipos donde juega un jugador
+        /// </summary>
+        /// <param name="equipos"></param>   listado de todos los equipos de la liga
+        /// <param name="jugadores"></param>  listado de todos los jugadores de la liga
         static void AgregarJugadorAEquipo(List<Equipo> equipos, List<Jugador> jugadores)
         {
             int opcNumEq;
@@ -658,13 +715,13 @@ namespace TP01
                                         }
                                     }
                                     Console.WriteLine("Jugador agregado al equipo");
-                                    Espera();
+                                    //Espera();
                          
                                 }
                                 else // eliigio n, N
                                 {
                                     Console.WriteLine("Ud, ha anulado el ingreso del jugador al equipo");
-                                    Espera();
+                                    //Espera();
                                 }
                                 //sale del while de respuesta correcta
                                 break; 
@@ -682,13 +739,18 @@ namespace TP01
                 {
                     Console.WriteLine("Actualmente no hay ningun jugador que puede ingresar al equipo");
                 }
+                Espera();
                 LimpiarPantalla();
             }
             
         }
 
 
-        //***************** MODIFICAR PARA AGREGAR CONFIRMACION DE LA OPERACION COMO EN AGREGAR***********
+        /// <summary>
+        /// Funcion que quita un equipo de listado de equipos donde juega un jugador
+        /// </summary>
+        /// <param name="equipos"></param>     listado de todos los equipos de la liga
+        /// <param name="jugadores"></param>   listado de todos los jugdores de la liga
         static void QuitarJugadorDeEquipo(List<Equipo> equipos, List<Jugador> jugadores)
         {
             int opcNumEq;
@@ -792,13 +854,14 @@ namespace TP01
                 LimpiarPantalla();
             }
         }
-        //ABM DE JUGADORES 
+
+
+        //ABM DE JUGADORES ******************************************
 
         /// <summary>
-        /// Alta Jugador crea una nueva copia de struct Jugador
+        /// Funcion para agregar un nuevo jugador a la liga
         /// </summary>
-        /// <param name="jugadores"></param>
-        /// <returns></returns>
+        /// <param name="jugadores"></param>  listado de jugadores de la liga
         static void AltaJugador(List<Jugador> jugadores)
         {
             string dni;
@@ -835,9 +898,9 @@ namespace TP01
                 
             }
             Console.WriteLine("Ingrese el nombre: ");
-            nombre = Console.ReadLine();
+            nombre = Capitalize(Console.ReadLine());
             Console.WriteLine("Ingrese el apellido: ");
-            apellido = Console.ReadLine();
+            apellido = Capitalize(Console.ReadLine());
 
 
             //loop para forzar edad valida
@@ -895,14 +958,42 @@ namespace TP01
             newJugador.afiliado = afiliado;
             newJugador.equipAsig = equipAsig;
 
-            jugadores.Add(newJugador);
-
-            Console.WriteLine("nuevo jugador agregado!!!");
+            Console.WriteLine("Estos son los datos ingresados");
+            newJugador.PrintSmall();
+            while(true)
+            {
+                Console.WriteLine("Desea guardar los datos ? (S/N)");
+                string opc = Console.ReadLine();
+                //valida que ingrese s, S, n o N
+                if (ValidaBool(opc))
+                {
+                    //si eleigio s, S
+                    if (ValidaSoN(opc))
+                    {
+                        jugadores.Add(newJugador);
+                        Console.WriteLine("nuevo jugador agregado!!!");
+                    }
+                    else //ingreso n, N
+                    {
+                        Console.WriteLine("ingreso del jugador cancelado!!!");
+                    }
+                    //sale del while
+                    break;
+                }
+                else // no ingreso s, S, n, N
+                {
+                    Console.WriteLine("Ingreso no valido");
+                }
+            }
             Espera();
             LimpiarPantalla();
 
         }
 
+        /// <summary>
+        /// Funcion para quitar un jugador de la liga
+        /// </summary>
+        /// <param name="jugadores"></param> listado de todos los jugadores de la liga
         static void BajaJugador(List<Jugador> jugadores)
         {
             int opcNum = -2;
@@ -951,6 +1042,10 @@ namespace TP01
 
         }
 
+        /// <summary>
+        /// funcion para modificar los datos de un jugador de la liga 
+        /// </summary>
+        /// <param name="jugadores"></param> listado de todos los jugadores de la liga
         static void ModificarDatosJugador(List<Jugador> jugadores)
         {
             string opc;
@@ -1291,7 +1386,7 @@ namespace TP01
         }
         
         /// <summary>
-        /// agrega un equipo a un jugador
+        /// funcion para agregar un equipo donde juega a un jugador
         /// </summary>
         /// <param name="jugadores"></param> Listado con todos los jugadores
         /// <param name="equipos"></param>  Listado con todos los equipos
@@ -1498,10 +1593,11 @@ namespace TP01
 
         // LISTADOS **************************************************************
 
+
         /// <summary>
         /// Imprime el listado de jugadores asegurados
         /// </summary>
-        /// <param name="jugadores"></param>  recibe un List de elementos Jugador, con todos los jugadores inscriptos
+        /// <param name="jugadores"></param>  Listado de todos los jugadores de la liga
         static void JugadoresAsegurados(List<Jugador> jugadores)
         {
             Console.WriteLine("Jugadores asegurados: ");
@@ -1527,7 +1623,7 @@ namespace TP01
         /// <summary>
         /// Imprime el listado de todos los jugadores ordenados por edad
         /// </summary>
-        /// <param name="jugadores"></param> recibe un List de elementos Jugador, con todos los jugadores inscriptos
+        /// <param name="jugadores"></param> listado de todos los jugadores de la liga
         static void JugadoresXEdad(List<Jugador> jugadores)
         {
             // creo una copia de la lista 
@@ -1556,7 +1652,7 @@ namespace TP01
         /// <summary>
         /// Imprime todos los jugadores x categoria 
         /// </summary>
-        /// <param name="jugadores"></param> recibe un List de elementos Jugador, con todos los jugadores inscriptos
+        /// <param name="jugadores"></param> listado de todos los jugadores de la liga
         static void JugadoresXCategoria(List<Jugador> jugadores)
         {
 
@@ -1586,14 +1682,15 @@ namespace TP01
             Espera();
             LimpiarPantalla();
         }
-   
+
 
         // REPORTES ******************************************************************
+
 
         /// <summary>
         /// Imprime el jugador mas joven y mas viejo del listado de jugadors
         /// </summary>
-        /// <param name="jugadores"></param> recibe un List de elemntos Jugador, con todos los jugadores inscriptos
+        /// <param name="jugadores"></param> listado de todos los jugadores de la liga
         static void MasJovenMasViejo(List<Jugador> jugadores)
         {
             //declaro variables locales para el mas joven y el mas viejo
@@ -1638,9 +1735,9 @@ namespace TP01
         }
 
         /// <summary>
-        /// Imprime la cantidad de jugadores que hay por categoria, segun la edad de los mismos, cada jugador puede estar en mas de un equipo de su edad para arriba
+        /// Imprime la cantidad de jugadores que hay por categoria
         /// </summary>
-        /// <param name="jugadores"></param> recibe un List de elemntos Jugador, con todos los jugadores inscriptos
+        /// <param name="jugadores"></param> listado de todos los jugadores de la liga
         static void CantidadXCategoria(List<Jugador> jugadores)
         {
             // creo un array de int local con la misma cantidad de elementos q de categorias
@@ -1669,7 +1766,7 @@ namespace TP01
         /// <summary>
         /// Imprime el promedio de edad de todos los jugadores inscriptos
         /// </summary>
-        /// <param name="jugadores"></param>  recibe un List de elemntos Jugador, con todos los jugadores inscriptos
+        /// <param name="jugadores"></param>   listado de todos los jugadores de la liga
         static void PromedioEdad(List<Jugador> jugadores)
         {
             //inicializo variable local con la suma de las edades
@@ -1697,8 +1794,8 @@ namespace TP01
         /// <summary>
         /// Funcion que realiza la accion de listar los equipos que no tienen la cantidad necesaria de jugadores
         /// </summary>
-        /// <param name="equipos"></param>
-        /// <param name="jugadores"></param>
+        /// <param name="equipos"></param>     listado de todos los equipos de la liga
+        /// <param name="jugadores"></param>   listado de todos los jugadores de la liga
         static void EquiposqueNecesitanJugadores(List<Equipo> equipos, List<Jugador> jugadores)
         {
             int cantEquipPrecisan = 0;
@@ -1759,7 +1856,7 @@ namespace TP01
         /// Recibe un stirng con cualquier orden de mayusc y minusculas
         /// </summary>
         /// <param name="texto"></param>
-        /// <returns>devuelve un texto sin espacios atras o adelante y la primer letra en mayusculas</returns>
+        /// <returns>devuelve un texto sin espacios atras o adelante y la primer letra de cada palabra en mayusculas</returns>
         static string Capitalize(string texto)
         {
             string[] palabras;
@@ -1887,48 +1984,12 @@ namespace TP01
 
         }
 
-        ///// <summary>
-        ///// Valida que la opcion elegida
-        ///// </summary>
-        ///// <param name="lista"></param> array de strings
-        ///// <param name="opc"></param> El ingreso por teclado hecho por el usuario
-        ///// <returns></returns>
-        //static bool ValidarOpcionElegida(string[] lista, string opc)
-        //{
-        //    // valida que no sea una cadena vacia
-        //    if (opc.Length == 0)
-        //    {
-        //        return false;
-        //    }
-        //    // valida que cada char de la cadena sea un digito
-        //    for (int i = 0; i < opc.Length; i++)
-        //    {
-        //        if (!char.IsDigit(opc[i]))
-        //        {
-        //            return false;
-        //        }
-        //    }
-
-        //    //sabiendo que es digito lo convierte a entero
-        //    int opcNum = int.Parse(opc);
-
-        //    //valida que la opcion este dentro de las opciones del menu
-        //    if (opcNum < 1 || opcNum > lista.Length)
-        //    {
-        //        return false;
-        //    }
-
-        //    // si esta todo correcto
-        //    return true;
-
-        //}
         /// <summary>
-        /// Valida que la opcion elegida sea un numero que sea un elemento de una lista
+        /// Valida que la opcion elegida corresponda a una del listado
         /// </summary>
-        /// <typeparam name="T"></typeparam>   tipo de elemento en la lista
-        /// <param name="lista"></param>  Lista de la cual tiene que elegir un elemento
-        /// <param name="opc"></param>   string con la opcion ingresada 
-        /// <returns>true si es valido false si no es valido</returns>
+        /// <param name="lista"></param> listado de elementos genericos
+        /// <param name="opc"></param> El ingreso por teclado hecho por el usuario
+        /// <returns>true si es valida o false si no es valida</returns>
         static bool ValidarOpcionElegida<T>(List<T> lista, string opc)
         {
             //si se ingreso nulo
@@ -2043,7 +2104,7 @@ namespace TP01
         /// <summary>
         /// funcion que analiza cual es la accion y la ejecuta la funcion asociada
         /// </summary>
-        /// <param name="accion"></param>
+        /// <param name="accion"></param>    la accion seleccionada en el menu
         /// <param name="equipos"></param>   el listado de todos los equipos de la liga
         /// <param name="jugadores"></param> el listado de todos los jugadores de la liga
         static void EjecutarAccion(AccionMenu accion, List<Equipo> equipos, List<Jugador> jugadores)
@@ -2125,6 +2186,12 @@ namespace TP01
             }
         }
 
+        /// <summary>
+        /// Funcion para contar cuantos equipos tiene un club
+        /// </summary>
+        /// <param name="equipos"></param>       listado de equipos de la liga
+        /// <param name="nombreClub"></param>    nombre del club
+        /// <returns>la cantidad de equipos que tiene un club</returns>
         static int ContarEquiposPorClub(List<Equipo> equipos, string nombreClub)
         {
             int cantidad = 0;
@@ -2139,7 +2206,7 @@ namespace TP01
         }
 
         /// <summary>
-        /// Calcula la letra del ult equipo del clbu y devuelve la letra siguiente
+        /// Calcula la letra del ult equipo del club y devuelve la letra siguiente
         /// </summary>
         /// <param name="equipos"></param>
         /// <param name="nombreClub"></param>
@@ -2167,6 +2234,11 @@ namespace TP01
             return ObtenerEtiqueta(mayorIndice + 1);
         }
 
+        /// <summary>
+        /// Calcula la etiqueta final A...Z, AA, ..., AZ... etc
+        /// </summary>
+        /// <param name="numero"></param>  numero entero que representa cual es 
+        /// <returns></returns>
         static string ObtenerEtiqueta(int numero)
         {
             string resultado = "";
@@ -2216,6 +2288,7 @@ namespace TP01
             else if (edad < 35) return 3;     // Primera
             else return 4;                    // Veteranos
         }
+
         /// <summary>
         /// convierte la categoria en la edad max permitida
         /// </summary>
@@ -2245,7 +2318,7 @@ namespace TP01
         /// <summary>
         /// Devuelve un arreglo de categorias distintas a la que tiene 
         /// </summary>
-        /// <param name="catActual"></param>
+        /// <param name="catActual"></param>  string con la categoria actual
         /// <returns>un arreglo de categorias distintas a la que se pasa como parametro</returns>
         static String[] ObtenerCategoriasDisponibles(String catActual)
         {
@@ -2269,7 +2342,7 @@ namespace TP01
         /// Verficia si el string es todo numerico, no nulo 
         /// </summary>
         /// <param name="dni"></param>
-        /// <returns></returns>
+        /// <returns>true si es , false si no lo es</returns>
         static bool VerificaDNIValido(string dni)
         {
             //verica si es nulo
@@ -2292,7 +2365,7 @@ namespace TP01
         /// </summary>
         /// <param name="dni"></param>     string con el numero de dni a buscar
         /// <param name="jugadores"></param>  List de elem Jugador, con todos los jugadores de la liga
-        /// <returns></returns>
+        /// <returns>true si hay uno igual cargado, false si no hay uno ya cargado</returns>
         static bool DNIExistente (string dni, List<Jugador> jugadores)
         {
             foreach(Jugador jug in jugadores)
@@ -2311,7 +2384,7 @@ namespace TP01
         /// <param name="valor"></param>  valor string
         /// <param name="valorMin"></param>  valor minimo
         /// <param name="valorMax"></param>  valor maximo
-        /// <returns></returns>
+        /// <returns>true si es numerico y esta dentro del rango, false caso contrario</returns>
         static bool VerificaIntRango(string valor, int valorMin, int valorMax)
         {
             //verica si es nulo
@@ -2339,7 +2412,7 @@ namespace TP01
         /// recib en string y ve si es s, S, n o N para ser un bool
         /// </summary>
         /// <param name="valor"></param> recibe un string 
-        /// <returns></returns>
+        /// <returns>true si el string es s, S, n o N, false caulquier otro caso</returns>
         static bool ValidaBool(string valor)
         {
             switch(valor)
@@ -2358,7 +2431,7 @@ namespace TP01
         /// funcion que se usa luego de ValidaBool para asegurarse que reciba solo S, s, N o n
         /// </summary>
         /// <param name="valor"></param>  valor que recibe (S, s, N o n
-        /// <returns> true si es S o s, y false si es n o N .. se pone default en false por sintaxis</returns>
+        /// <returns> true si es S o s, y false si es n o N o cualquier otro caso.. se pone default en false por sintaxis</returns>
         static bool ValidaSoN(string valor)
         {
             switch (valor)
@@ -2381,7 +2454,7 @@ namespace TP01
         /// <summary>
         /// Recibe un listado y una opcion , y verifica si la opcion elegida es correcta 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T"></typeparam> generico que define el tipo de dato del listdo
         /// <param name="listado"></param> listado generaico 
         /// <param name="tipo"></param>  puede ser jugador o equipo en principio
         /// <returns></returns>  el numero elegido dentro del listado, -1 si es que desea salir de la eleccion
@@ -2466,11 +2539,12 @@ namespace TP01
 
             return equiposDisp;
         }  
+
         /// <summary>
         /// Funcion para elegir que jugadores pueden ingresar a un equipo
         /// </summary>
-        /// <param name="equipo"></param>
-        /// <param name="jugadores"></param>
+        /// <param name="equipo"></param>     equipo de la liga
+        /// <param name="jugadores"></param>  listado con todos los jugadores de la liga
         /// <returns>devuelve un list con los jugadores que pueden ingresar</returns>
         static List<Jugador> ElegirJugadoresCandidatos(Equipo equipo, List<Jugador> jugadores)
         {
@@ -2522,10 +2596,6 @@ namespace TP01
             // creo una lista de jugadores
             List<Jugador> jugadores = new List<Jugador>();
 
-            //cargo datos para testeo .. BORRAR 
-            //DatosTest.CargaTestCorta(jugadores, equipos);
-            //DatosTest.CargaTest(jugadores, equipos);
-            //DatosTest.CargaDatosMinima(equipos);
 
             //pongo al menu activo apuntando al menu principal
             OpcionMenu[] currentMenu = menuPrincipal;
