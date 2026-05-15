@@ -8,7 +8,7 @@
 //************************************************************************************************** 
 
 // Formato: Ctrl + K  luego Ctrl + D
-//BUG08
+//RE02
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -792,7 +792,7 @@ LimpiarPantalla();
                 {
                     Console.WriteLine("Actualmente no hay ningun jugador que puede ingresar al equipo");
                     //Agregado BUG07
-                    Espera() ;
+                    Espera();
                 }
                 LimpiarPantalla();
             }
@@ -1899,6 +1899,12 @@ LimpiarPantalla();
         static void EquiposqueNecesitanJugadores(List<Equipo> equipos, List<Jugador> jugadores)
         {
             List<Equipo> equiposQuePrecisan = new List<Equipo>();
+            /*
+             * SE AGREGA DETALLES DESCRIPTIVOS PARA MEJORAR RESULTADOS DE PRUEBA RE-02
+             */
+
+            Console.WriteLine("REPORTE: ESTOS EQUIPOS QUE NECESITAN JUGADORES");
+            Console.WriteLine("REGLA: Un equipo debe tener al menos 9 jugadores (excepto categoría Veteranos, cuyo mínimo es 10).\n");
             if (equipos.Count > 0)
             {
                 foreach (Equipo equipo in equipos)
@@ -1911,9 +1917,24 @@ LimpiarPantalla();
 
                 //si hay equipos con falta
                 if (equiposQuePrecisan.Count > 0)
+                    // Se agrega un contador para que aclare cuantos jugadores tiene cada equipo
+
                 {
                     Console.WriteLine("Estos equipos estan necesitando jugadores");
-                    ImprimirListado(equiposQuePrecisan);
+                    int i = 1;
+                    foreach (Equipo equipo in equiposQuePrecisan)
+                    {
+                        // Calculamos los datos para mostrarlos en pantalla
+                        int cantActual = equipo.CantidadJugadoresEquipo(jugadores);
+                        int faltantes = equipo.cantMinima - cantActual;
+
+                        Console.WriteLine($"{i} - {equipo.nombreEquipo} (Categoría: {equipo.categoria})");
+                        Console.WriteLine($"    Jugadores actuales: {cantActual} / Mínimo requerido: {equipo.cantMinima}");
+                        Console.WriteLine($"    Faltan: {faltantes} jugador(es)\n");
+
+                        i++;
+                    }
+                    //ImprimirListado(equiposQuePrecisan);
                 }
                 else //ningun equipo precisa jugadores
                 {
