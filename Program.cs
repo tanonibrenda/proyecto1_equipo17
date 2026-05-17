@@ -530,19 +530,21 @@ namespace TP01
                             {
                                 //creo un equipoTemporal
                                 Equipo equipoTemp = equipos[opcNumEq];
-                                int edadMaxOrig = ObtenerEdadMaxCategoria(equipoTemp.categoria);
+                                //int edadMaxOrig = ObtenerEdadMaxCategoria(equipoTemp.categoria);
+                                //int edaMinOrig  = ObtenerEdadMinCategoria(equipoTemp.categoria);
                                 int edadMaxNueva = ObtenerEdadMaxCategoria(categoriasDisp[opcNumCat]);
+                                int edadMinNueva = ObtenerEdadMinCategoria(categoriasDisp[opcNumCat]);
                                 //filtrar jugadores x edad
                                 List<Jugador> jugadoresAQuitar = new List<Jugador>();
                                 List<Jugador> jugadoresQueQuedan = new List<Jugador>();
                                 //si la edad maxima de la categoria original es mayor a la de la edad max de la nueva categoria y el equipo tiene jugadores
-                                if (edadMaxOrig > edadMaxNueva && equipoTemp.CantidadJugadoresEquipo(jugadores) > 0)
+                                if (equipoTemp.CantidadJugadoresEquipo(jugadores) > 0)
                                 {
 
 
                                     foreach(Jugador jug in equipoTemp.ListadoDeJugadores(jugadores))
                                     {
-                                        if(jug.edad >  edadMaxNueva)
+                                        if(jug.edad >  edadMaxNueva || jug.edad <= edadMinNueva)
                                         {
                                             jugadoresAQuitar.Add(jug);
                                         }
@@ -875,7 +877,7 @@ namespace TP01
             Console.WriteLine();
             while(true)
             {
-                Console.WriteLine("Ingrese el DNI: ");
+                Console.WriteLine("Ingrese el DNI: (entre 6 y 8 digitos)");
                 dni = Console.ReadLine();
                 //verifico que sea valido
                 if (VerificaDNIValido(dni))
@@ -1189,7 +1191,7 @@ namespace TP01
                                     foreach(Equipo equip in jugadores[opcNumJug].equipAsig)
                                     {
                                         //si la nueva edad es <= a la cat del equipo asig
-                                        if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria))
+                                        if (newEdad <= ObtenerEdadMaxCategoria(equip.categoria) && newEdad >= ObtenerEdadMinCategoria(equip.categoria))
                                         {
                                             equiposRestantes.Add(equip);
                                         }
@@ -1317,11 +1319,11 @@ namespace TP01
                                     //si esta afiliado
                                     if (ValidaSoN(opc))
                                     {
-                                        jugadorTemp.seguro = true;
+                                        jugadorTemp.afiliado = true;
                                     }
                                     else //no esta afiliado
                                     {
-                                        jugadorTemp.seguro = false;
+                                        jugadorTemp.afiliado = false;
                                     }
                                     // salgo del bucle ingreso afiliado
                                     break;
@@ -1848,7 +1850,7 @@ namespace TP01
         /// </summary>
         static void Espera()
         {
-            Console.WriteLine("Presione cualquier tecla para continuar");
+            Console.WriteLine("Presione tecla enter para continuar");
             Console.ReadLine();
         }
 
@@ -2292,7 +2294,7 @@ namespace TP01
         /// <summary>
         /// convierte la categoria en la edad max permitida
         /// </summary>
-        /// <param name="categoria"></param> string de cateogira 
+        /// <param name="categoria"></param> string de categoria 
         /// <returns>edad maxima permitida para la categoria</returns>
         static int ObtenerEdadMaxCategoria(String categoria)
         {
@@ -2314,6 +2316,39 @@ namespace TP01
             }
             return edadMax;
         }
+
+        /// <summary>
+        /// convierte la categoria en la edad minima permitida
+        /// </summary>
+        /// <param name="categoria"></param> string de categoria 
+        /// <returns>edad maxima permitida para la categoria</returns>
+        static int ObtenerEdadMinCategoria(String categoria)
+        {
+            int edadMin = -1;
+            switch (categoria)
+            {
+                case "Infantiles":
+                    edadMin = 1;
+                    break;
+                case "Cadetes":
+                    edadMin = 13;
+                    break;
+                case "Juveniles":
+                    edadMin = 16;
+                    break;
+                case "Primera":
+                    edadMin = 18;
+                    break;
+                case "Veteranos":
+                    edadMin = 35;
+                    break;
+                default:
+                    edadMin = 99;
+                    break;
+            }
+            return edadMin;
+        }
+
 
         /// <summary>
         /// Devuelve un arreglo de categorias distintas a la que tiene 
@@ -2348,6 +2383,11 @@ namespace TP01
             //verica si es nulo
             if (string.IsNullOrEmpty(dni))
                 return false;
+
+            //verifica la longitud del dni, entre 6 y 8 digitos 
+            if (dni.Length < 6 || dni.Length > 8)
+                return false;
+
 
             //recorre cada caracter del string
             foreach (char c in dni)
@@ -2514,7 +2554,7 @@ namespace TP01
                 }
 
                 //si la edad del jugador es menor o igual a la de la categoria del equipo 
-                if(jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria))
+                if(jugador.edad <= ObtenerEdadMaxCategoria(equip.categoria) && jugador.edad >= ObtenerEdadMinCategoria(equip.categoria))
                 {
                     bool yaEsta = false;
                     
@@ -2560,7 +2600,7 @@ namespace TP01
                 }
 
                 // verifico edad maxima de categoria
-                if (jug.edad > ObtenerEdadMaxCategoria(equipo.categoria))
+                if (jug.edad > ObtenerEdadMaxCategoria(equipo.categoria) || jug.edad < ObtenerEdadMinCategoria(equipo.categoria))
                 {
                     continue;
                 }
